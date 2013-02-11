@@ -30,9 +30,9 @@ Flight::set('flight.views.path', APP_PATH.'/view');
 /****  CONFIGURE YOUR DOMAIN AND DB HERE  ****/ 
 define ( 'DOMAIN', 'fede.localhost' );
 
-ORM::configure('mysql:host=localhost;dbname=lodefede');
+ORM::configure('mysql:host=localhost;dbname=asd');
 ORM::configure('username', 'root');
-ORM::configure('password', 'sqlPASS1234');
+ORM::configure('password', '');
 
 /****  AND DOWN THE RABBIT HOLE  ****/
 
