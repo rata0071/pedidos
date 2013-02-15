@@ -15,6 +15,7 @@ define ( 'LIB_PATH', realpath ( dirname ( __FILE__ ) . '/lib' ) );
 
 define ( 'FLIGHT_PATH', LIB_PATH . '/flight' );
 define ( 'PARIS_PATH', LIB_PATH . '/paris' );
+define ( 'MAILER_PATH', LIB_PATH . '/phpmailer' );
 
 require FLIGHT_PATH.'/Flight.php';
 require PARIS_PATH.'/paris.php';
@@ -30,7 +31,7 @@ Flight::set('flight.views.path', APP_PATH.'/view');
 /****  CONFIGURE YOUR DOMAIN AND DB HERE  ****/ 
 define ( 'DOMAIN', 'fede.localhost' );
 
-ORM::configure('mysql:host=localhost;dbname=asd');
+ORM::configure('mysql:host=localhost;dbname=');
 ORM::configure('username', 'root');
 ORM::configure('password', '');
 

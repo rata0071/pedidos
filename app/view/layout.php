@@ -2,7 +2,7 @@
 <html land="es">
 <head>
 	<meta charset="UTF-8" />
-	<title>Lo de fede</title>
+	<title>Vive Verde</title>
 	<meta name="description" content="Frutas y verduras a tu puerta, elegilas online." />
 
 	<link rel="stylesheet" href="<?= View::makeUri('/assets/css/bootstrap.min.css') ?>" />
@@ -24,6 +24,9 @@
 	<div class="container">
 		<content>
 		<?php if ( Flight::get('error') ) : ?><span class="red"><i class="icon-exclamation-sign"></i> <?= Flight::get('error') ?></span><?php endif ?>
+		<?php foreach ( Flight::get('errores') as $error ) : ?>
+			<div class="alert alert-error"><i class="icon-exclamation-sign"></i> <?= View::e($error) ?></div>
+		<?php endforeach ?>
 		<?php if ( Flight::get('notice') ) : ?><span><i class="icon-exclamation-sign"></i> <?= Flight::get('notice') ?></span><?php endif ?>
 		<?= $content ?>
 		</content>
