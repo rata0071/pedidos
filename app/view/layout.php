@@ -6,7 +6,7 @@
 	<meta name="description" content="Frutas y verduras a tu puerta, elegilas online." />
 
 	<link rel="stylesheet" href="<?= View::makeUri('/assets/css/bootstrap.min.css') ?>" />
-	<link rel="stylesheet" href="<?= View::makeUri('/assets/css/font-awesome.css') ?>" />
+	<link rel="stylesheet" href="<?= View::makeUri('/assets/css/font-awesome.min.css') ?>" />
 	<link rel="stylesheet" href="<?= View::makeUri('/assets/css/ui-lightness/jquery-ui-1.10.0.custom.min.css') ?>" />
 	<link rel="stylesheet" href="<?= View::makeUri('/assets/css/main.css') ?>" />
 </head>
