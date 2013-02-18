@@ -30,7 +30,4 @@ class user extends Model {
 		return;
 	}
 
-	public static function newChallenge() {
-		return sha1(uniqid());
-	}
 }

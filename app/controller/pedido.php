@@ -20,7 +20,6 @@ class controller_pedido {
 	public function encargar() {
 		$view = Flight::View();
 		$datos = Flight::request()->data;
-
 		list( $valido, $errores ) = self::validarPedido($datos);
 
 		if ( $valido ) {
@@ -33,7 +32,7 @@ class controller_pedido {
 
 				$auth = Model::factory('auth')->create();
 				$auth->user_id = $user->id;
-				$auth->challenge = user::newChallenge();
+				$auth->challenge = auth::newChallenge();
 				$auth->save();
 			}
 
@@ -41,7 +40,8 @@ class controller_pedido {
 			$pedido->estado = 'sinconfirmar';
 			$pedido->user_id = $user->id;
 			$pedido->fecha_entrega = $datos['fecha_entrega'];
-			$pedido->horario_id = $datos['horario_id'];
+			$recorrido = model_recorrido::getFechaDisponible($datos['fecha_entrega'], $datos['horario_id'], $datos['barrio_id']);
+			$pedido->recorrido_id = $recorrido->id;
 			$pedido->observaciones = $datos['observaciones'];
 			$pedido->save();
 
@@ -98,8 +98,25 @@ class controller_pedido {
 			}
 		}
 
-		// @TODO validar fecha de pedido
+		if ( ! model_recorrido::getFechaDisponible($datos['fecha_entrega'], $datos['horario_id'], $datos['barrio_id']) ) {
+			$ok = false;
+			$errores[] = 'El horario o fecha no esta disponible.';
+		}
 
 		return array( $ok, $errores);
+	}
+
+
+	public function confirmar ( $id ) {
+		$view = Flight::View();
+		$pedido = model_pedido::getById($id);
+		if ( $pedido && $pedido->getUser()->challenge == trim($_GET['c']) && ! $pedido->expiro()) {
+			$pedido->confirmar();
+			$view->set('pedido',$pedido);
+			Flight::render('pedido_confirmar',null,'layout');
+		} else {
+			Flight::set('errores',array('Pedido expirado o codigo de validación incorrecto.'));
+			Flight::render('pedido_error',null,'layout');
+		}
 	}
 }

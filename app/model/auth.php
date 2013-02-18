@@ -81,4 +81,12 @@ class auth extends Model {
 	public static function getUser() {
 		return model_user::getById($_SESSION['user_id']);
 	}
+	public static function newChallenge() {
+		return sha1(uniqid());
+	}
+
+	public function resetChallenge() {
+		$this->challenge = self::newChallenge();
+		$this->save();
+	}
 }

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tiempo de generación: 15-02-2013 a las 03:40:26
+-- Tiempo de generación: 18-02-2013 a las 03:12:59
 -- Versión del servidor: 5.5.28-1
 -- Versión de PHP: 5.4.4-10
 
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `pedido` (
   `user_id` int(10) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `fecha_entrega` date NOT NULL,
-  `horario_id` int(10) NOT NULL,
+  `recorrido_id` int(10) NOT NULL,
   `observaciones` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
@@ -185,6 +185,7 @@ CREATE TABLE IF NOT EXISTS `recorrido` (
   `jueves` tinyint(1) NOT NULL,
   `viernes` tinyint(1) NOT NULL,
   `sabado` tinyint(1) NOT NULL,
+  `cupo` int(8) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
@@ -192,9 +193,9 @@ CREATE TABLE IF NOT EXISTS `recorrido` (
 -- Volcado de datos para la tabla `recorrido`
 --
 
-INSERT INTO `recorrido` (`id`, `barrio_id`, `horario_id`, `domingo`, `lunes`, `martes`, `miercoles`, `jueves`, `viernes`, `sabado`) VALUES
-(1, 3, 1, 0, 1, 1, 1, 1, 1, 0),
-(2, 3, 2, 0, 1, 1, 1, 1, 0, 0);
+INSERT INTO `recorrido` (`id`, `barrio_id`, `horario_id`, `domingo`, `lunes`, `martes`, `miercoles`, `jueves`, `viernes`, `sabado`, `cupo`) VALUES
+(1, 3, 1, 0, 1, 1, 1, 1, 1, 0, 0),
+(2, 3, 2, 0, 1, 1, 1, 1, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -208,12 +209,14 @@ CREATE TABLE IF NOT EXISTS `user` (
   `nombre` varchar(128) COLLATE utf8_bin NOT NULL,
   `apellido` varchar(128) COLLATE utf8_bin NOT NULL,
   `telefono` varchar(20) COLLATE utf8_bin NOT NULL,
-  `calle` varchar(128) COLLATE utf8_bin NOT NULL,
-  `numero` varchar(20) COLLATE utf8_bin NOT NULL,
+  `calle` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+  `numero` varchar(20) COLLATE utf8_bin DEFAULT NULL,
   `direccion` varchar(128) COLLATE utf8_bin NOT NULL,
-  `piso` varchar(4) COLLATE utf8_bin NOT NULL,
-  `depto` varchar(4) COLLATE utf8_bin NOT NULL,
-  `barrio_id` int(10) NOT NULL,
+  `piso` varchar(4) COLLATE utf8_bin DEFAULT NULL,
+  `depto` varchar(4) COLLATE utf8_bin DEFAULT NULL,
+  `lat` double DEFAULT NULL,
+  `lng` double DEFAULT NULL,
+  `barrio_id` int(10) DEFAULT NULL,
   `estado` enum('sinconfirmar','confirmado','suspendido') COLLATE utf8_bin NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

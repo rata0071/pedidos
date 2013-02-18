@@ -46,6 +46,8 @@ Flight::route('GET /',array('controller_producto','home'));
 Flight::route('GET /pedido',array('controller_pedido','nuevo'));
 Flight::route('POST /pedido',array('controller_pedido','encargar'));
 
+Flight::route('GET /pedido/@id:[0-9]+/confirmar',array('controller_pedido','confirmar'));
+
 Flight::route('POST /auth/login/?$',array('controller_auth','login'));
 Flight::route('GET /auth/logout/?$',array('controller_auth','logout'));
 

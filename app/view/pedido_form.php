@@ -23,6 +23,8 @@
 	<input type="hidden" name="numero" id="numero" value="<?= $datos ? View::e($datos['numero']) : '' ?>" />
 	<input type="hidden" name="barrio" id="barrio" value="<?= $datos ? View::e($datos['barrio']) : '' ?>" />
 	<input type="hidden" name="barrio_id" id="barrio_id" value="<?= $datos ? View::e($datos['barrio_id']) : '0' ?>" />
+	<input type="hidden" name="lat" id="lat" value="<?= $datos ? View::e($datos['lat']) : '0' ?>" />
+	<input type="hidden" name="lng" id="lng" value="<?= $datos ? View::e($datos['lng']) : '0' ?>" />
 	<div class="input-prepend span2"><span class="add-on"><i class="icon-home"></i> Piso </span> <input type="text" class="input-small" name="piso" value="<?= $datos ? View::e($datos['piso']) : '' ?>" /></div>
 	<div class="input-prepend span2"><span class="add-on"><i class="icon-home"></i> Depto</span> <input type="text" class="input-small" name="depto" value="<?= $datos ? View::e($datos['depto']) : '' ?>" /></div>
 </span>
@@ -45,7 +47,7 @@
 	<span class="span3" id="calendar"></span>
 	<span class="span3" id="horarios_disponibles"></span>
 	<input type="hidden" name="fecha_entrega" id="fecha_entrega" value="<?= $datos ? View::e($datos['fecha_entrega']) : '' ?>" />
-	<input type="hidden" name="horario_id" id="horario_id" value="<?= $datos ? View::e($datos['horario_id']) : '' ?>" />
+	<input type="hidden" name="selected_horario_id" id="selected_horario_id" value="<?= $datos ? View::e($datos['horario_id']) : '' ?>" />
 </span>
 
 <br />

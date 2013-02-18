@@ -2,29 +2,17 @@ $(document).ready(function(){
 
 var d = new Date();
 
-// Pagina de pedidos
+// Si estamos en la pagina de pedidos
 if ( $('#calendar').length != 0 ) {
 
 var barrioId = $('#barrio_id').val();
-var semana = {"domingo":0, "lunes": 0, "martes":0, "miercoles":0, "jueves":0, "viernes":0, "sabado":0};
+var semana = [0,0,0,0,0,0,0];
 var nombreDias = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
 
 var mostrarDia = function ( date ) {
 	if ( barrioId == 0 ) {
 		return {0:false};
-	} else if ( date.getDay() == 0 && semana['domingo'] > 0 ) {
-		return {0:true}; 
-	} else if ( date.getDay() == 1 && semana['lunes'] > 0 ) {
-		return {0:true}; 
-	} else if ( date.getDay() == 2 && semana['martes'] > 0 ) {
-		return {0:true}; 
-	} else if ( date.getDay() == 3 && semana['miercoles'] > 0 ) {
-		return {0:true}; 
-	} else if ( date.getDay() == 4 && semana['jueves'] > 0 ) {
-		return {0:true}; 
-	} else if ( date.getDay() == 5 && semana['viernes'] > 0 ) {
-		return {0:true};
-	} else if ( date.getDay() == 6 && semana['sabado'] > 0 ) {
+	} else if ( semana[date.getDay()] > 0 ) {
 		return {0:true}; 
 	} else {
 		return {0:false};
@@ -63,18 +51,18 @@ $("#calendar").datepicker( {
 
 var reloadCalendar = function () {
 	barrioId = $('#barrio_id').val();
-	semana = {"domingo":0, "lunes": 0, "martes":0, "miercoles":0, "jueves":0, "viernes":0, "sabado":0};
+	semana = [0,0,0,0,0,0,0];
 	// sumamos los dias de recorridos de todos los horarios
 	r = recorridos[barrioId];
 	for ( horario in r ) {
 	if (r.hasOwnProperty(horario)) {
-		semana['domingo'] += r[horario]['domingo'];
-		semana['lunes'] += r[horario]['lunes'];
-		semana['martes'] += r[horario]['martes'];
-		semana['miercoles'] += r[horario]['miercoles'];
-		semana['jueves'] += r[horario]['jueves'];
-		semana['viernes'] += r[horario]['viernes'];
-		semana['sabado'] += r[horario]['sabado'];
+		semana[0] += r[horario]['domingo'];
+		semana[1] += r[horario]['lunes'];
+		semana[2] += r[horario]['martes'];
+		semana[3] += r[horario]['miercoles'];
+		semana[4] += r[horario]['jueves'];
+		semana[5] += r[horario]['viernes'];
+		semana[6] += r[horario]['sabado'];
 	}
 	}
 	$('#calendar').datepicker("refresh");
@@ -95,15 +83,23 @@ var cargarBarrio = function () {
 	direccion = $('#direccion').val() + ', Ciudad Autónoma de Buenos Aires, Argentina';
 	geocoder.geocode( { 'address': direccion }, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
+
+			if ( results[0].geometry.location_type == google.maps.GeocoderLocationType.ROOFTOP || results[0].geometry.location_type == google.maps.GeocoderLocationType.RANGE_INTERPOLATED ) {
+				$('#lat').val(results[0].geometry.location.lat());
+				$('#lng').val(results[0].geometry.location.lng());
+			}
+
 			$(results[0].address_components).each(function(index,element){
 				if ( element.types.indexOf('neighborhood') != -1 ) {
 					barrio_id = getBarrioId(element.long_name);
+			
 					if ( barrio_id ) {
 						$('#barrio').val(element.long_name);
 						$('#barrio_id').val(barrio_id);
 						reloadCalendar();
+						return;
 					} else {
-						// El barrio no esta en el recorrido
+						// El barrio no esta en la aplicacion
 					}
 				}
 			});
