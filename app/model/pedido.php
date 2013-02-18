@@ -19,11 +19,13 @@ class pedido extends Model {
 		$mail = new PHPMailer();
 
 		$mail->From = "pedidos@viveverde.com.ar";
+		$mail->FromName = "Vive Verde";
 		$mail->AddAddress($this->getUser()->email);
 		$link = $this->getConfirmacionLink();
-
+		$_link = View::e($link);
+var_dump($_link);
 		$mail->Subject = "Confirma tu pedido - Vive Verde";
-		$mail->Body = 'Por favor confirma que los datos de este <strong>pedido son correctos</strong> haciendo <a href="'.View::e($link).'" target="_blank">click aqui</a> o ingresando a esta dirección: '.View::e($link);
+		$mail->Body = 'Por favor confirma que los datos de este pedido son correctos haciendo <a href="'.$_link.'" target="_blank">click aqui</a> o ingresando a esta dirección: '.$link;
 		$mail->IsHTML(true);
 		$mail->AltBody = 'Por favor confirma que los datos de este *pedido son correctos* ingresando a esta direccion: '.$link;
 		if(!$mail->Send()) {

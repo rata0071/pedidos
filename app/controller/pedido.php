@@ -39,7 +39,7 @@ class controller_pedido {
 			$pedido = Model::factory('pedido')->create();
 			$pedido->estado = 'sinconfirmar';
 			$pedido->user_id = $user->id;
-			$pedido->fecha_entrega = $datos['fecha_entrega'];
+			$pedido->fecha_entrega = strtotime($datos['fecha_entrega']);
 			$recorrido = model_recorrido::getFechaDisponible($datos['fecha_entrega'], $datos['horario_id'], $datos['barrio_id']);
 			$pedido->recorrido_id = $recorrido->id;
 			$pedido->observaciones = $datos['observaciones'];
@@ -110,8 +110,12 @@ class controller_pedido {
 	public function confirmar ( $id ) {
 		$view = Flight::View();
 		$pedido = model_pedido::getById($id);
-		if ( $pedido && $pedido->getUser()->challenge == trim($_GET['c']) && ! $pedido->expiro()) {
+
+		if ( $pedido && $pedido->checkChallenge($_GET['c']) && !$pedido->expiro()) {
 			$pedido->confirmar();
+			if ( $pedido->getUser()->sinPassword() ) {
+				$view->set('pedirpassword',true);
+			}
 			$view->set('pedido',$pedido);
 			Flight::render('pedido_confirmar',null,'layout');
 		} else {

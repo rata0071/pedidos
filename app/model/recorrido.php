@@ -30,12 +30,12 @@ class model_recorrido {
 		return json_encode($a);
 	}
 
-	public static function hayFechaDisponible($fecha_entrega, $horario_id, $barrio_id) {
+	public static function getFechaDisponible($fecha_entrega, $horario_id, $barrio_id) {
 		$dias = array('domingo','lunes','martes','miercoles','jueves','viernes','sabado');
 		$dw = date('w',strtotime($fecha_entrega));
 		$dia = $dias[$dw];
 		$recorrido = Model::factory('recorrido')->where('barrio_id',$barrio_id)->where('horario_id',$horario_id)->where($dia,'1')->find_one();
-		return (bool)$recorrido;
+		return $recorrido;
 	}
 }
 

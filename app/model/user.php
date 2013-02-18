@@ -30,4 +30,7 @@ class user extends Model {
 		return;
 	}
 
+	public function sinPassword() {
+		return is_null($this->getAuth()->password);
+	}
 }
