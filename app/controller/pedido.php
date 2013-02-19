@@ -45,6 +45,16 @@ class controller_pedido {
 			$pedido->observaciones = $datos['observaciones'];
 			$pedido->save();
 
+			foreach ( $datos['p'] as $producto_id => $cantidad ) {
+				if ( $cantidad > 0 ) {
+					$item = Model::factory('item')->create();
+					$item->pedido_id = $pedido->id;
+					$item->producto_id = $producto_id;
+					$item->cantidad = $cantidad;
+					$item->save();
+				}
+			}
+
 			list ( $enviado, $error ) = $pedido->enviarConfirmacion();
 
 			$view->set('user',$user);
@@ -115,8 +125,12 @@ class controller_pedido {
 			$pedido->confirmar();
 			if ( $pedido->getUser()->sinPassword() ) {
 				$view->set('pedirpassword',true);
+				$pedido->getUser()->getAuth()->login();
 			}
-			$view->set('pedido',$pedido);
+			if ( $pedido->getUser()->sinConfirmar() ) {
+				$pedido->getUser()->confirmar();
+			}
+			$view->set('auth',$pedido->getUser()->getAuth());
 			Flight::render('pedido_confirmar',null,'layout');
 		} else {
 			Flight::set('errores',array('Pedido expirado o codigo de validación incorrecto.'));

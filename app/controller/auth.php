@@ -12,11 +12,11 @@ class controller_auth {
 				model_auth::clearFailed($user->id);
 				Flight::redirect(View::makeUri('/'));
 			} else {
-				Flight::set('error','@#$%^&*!');
+				Flight::set('errores',array('Email o contraseña incorrecta.'));
 				model_auth::increaseFailed($user->id);
 			}
 		} else {
-			Flight::set('error','@#$%^&*!');
+			Flight::set('errores',array('Email o contraseña incorrecta.'));
 		}
 
 		Flight::render('auth_login',null,'layout');
@@ -42,8 +42,22 @@ class controller_auth {
 			$auth->changePassword($data['newpassword']);
 			Flight::redirect(View::makeUri('/'));
 		} else {
-			Flight::set('error','Error al cambiar el password');
+			Flight::set('errores',array('Error al cambiar la contraseña.'));
 			Flight::render('auth_change',null,'layout');
+		}
+	}
+
+	public function newpassword() {
+		$view = Flight::View();
+		$data = Flight::request()->data;
+		$auth = model_auth::getCurrent();
+		if ( $auth->checkCSRFToken($data['csrftoken']) && $data['password'] == $data['repeat'] ) {
+			$auth->changePassword($data['password']);
+			Flight::redirect(View::makeUri('/pedidos'));
+		} else {
+			$view->set('auth',$auth);
+			Flight::set('errores',array('Error al crear la contraseña.'));
+			Flight::render('auth_set',null,'layout');
 		}
 	}
 }

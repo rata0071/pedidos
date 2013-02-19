@@ -29,11 +29,11 @@ Flight::set('flight.views.path', APP_PATH.'/view');
 
 
 /****  CONFIGURE YOUR DOMAIN AND DB HERE  ****/ 
-define ( 'DOMAIN', 'fede.localhost' );
+define ( 'DOMAIN', 'verde.esfriki.com' );
 
-ORM::configure('mysql:host=localhost;dbname=');
-ORM::configure('username', 'root');
-ORM::configure('password', '');
+ORM::configure('mysql:host=db.esfriki.com;dbname=bkobras');
+ORM::configure('username', 'esfriki');
+ORM::configure('password', 'esFRIkipaNOTAGAIN');
 
 /****  AND DOWN THE RABBIT HOLE  ****/
 
@@ -53,5 +53,7 @@ Flight::route('GET /auth/logout/?$',array('controller_auth','logout'));
 
 Flight::route('GET /auth/password/?$',array('controller_auth','changeForm'));
 Flight::route('POST /auth/password/?$',array('controller_auth','change'));
+
+Flight::route('POST /auth/newpassword/?$', array('controller_auth','newpassword'));
 
 Flight::start();

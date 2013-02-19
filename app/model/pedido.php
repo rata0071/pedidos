@@ -22,10 +22,10 @@ class pedido extends Model {
 		$mail->FromName = "Vive Verde";
 		$mail->AddAddress($this->getUser()->email);
 		$link = $this->getConfirmacionLink();
-		$_link = View::e( $link )
-		;
+		$_link = View::e( $link );
+
 		$mail->Subject = "Confirma tu pedido - Vive Verde";
-		$mail->Body = 'Por favor confirma que los datos de este pedido son correctos haciendo <a href="'.$_link.'" target="_blank">click aqui</a> o ingresando a esta dirección: '.$link;
+		$mail->Body = 'Por favor confirma que los datos de este pedido son correctos haciendo <a href="'.$_link.'" target="_blank">click aqui</a> o ingresando a esta dirección: '.$_link;
 		$mail->IsHTML(true);
 		$mail->AltBody = 'Por favor confirma que los datos de este *pedido son correctos* ingresando a esta direccion: '.$link;
 

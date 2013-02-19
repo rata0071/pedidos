@@ -89,4 +89,17 @@ class auth extends Model {
 		$this->challenge = self::newChallenge();
 		$this->save();
 	}
+
+	public static function getCSRFToken() {
+		$_SESSION['csrf_token'] = sha1(uniqid());
+		return $_SESSION['csrf_token'];
+	}
+
+	public static function checkCSRFToken($t) {
+		if ( ! is_null($t) && ! empty($t) ) {
+			return $t == $_SESSION['csrf_token'];
+		} else {
+			return false;
+		}
+	}
 }

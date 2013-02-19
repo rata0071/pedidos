@@ -13,8 +13,13 @@ class model_user {
 }
 
 class user extends Model {
+	private $auth = false;
+
 	public function getAuth() {
-		return Model::factory('auth')->where('user_id',$this->id)->find_one();
+		if ( ! $this->auth ) { 
+			$this->auth = Model::factory('auth')->where('user_id',$this->id)->find_one();
+		}
+		return $this->auth;
 	}
 
 	public function cargarDatos( $datos ) {
@@ -32,5 +37,14 @@ class user extends Model {
 
 	public function sinPassword() {
 		return is_null($this->getAuth()->password);
+	}
+
+	public function sinConfirmar() {
+		return $this->estado == 'sinconfirmar';
+	}
+
+	public function confirmar() {
+		$this->estado = 'confirmado';
+		$this->save();
 	}
 }
