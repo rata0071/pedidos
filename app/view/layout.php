@@ -16,18 +16,46 @@
 		<div class="container">
 		<a href="<?= View::makeUri('/') ?>">Inicio</a>
 		<a href="<?= View::makeUri('/pedido') ?>">Hacer pedido</a>
-
+		<?php if ( auth::isLoggedIn() ) : ?>
+		<div class="btn-group inline pull-right">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user"></i> <?= View::e(auth::getUser()->nombre) ?></a>
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+			<ul class="dropdown-menu">
+				<li><a href="<?= View::makeUri('/pedidos') ?>"><i class="icon-truck"></i> Ver pedidos</a></li>
+				<li class="divider"></li>
+				<li><a href="<?= View::makeUri('/user/datos') ?>"><i class="icon-info-sign"></i> Editar datos</a></li>
+				<li><a href="<?= View::makeUri('/auth/changepassword') ?>"><i class="icon-lock"></i> Cambiar contraseña</a></li>
+				<li class="divider"></li>
+				<li><a href="<?= View::makeUri('/auth/logout') ?>"><i class="icon-signout"></i> Salir</a></li>
+			</ul>
+		</div>
+		<?php else : ?>
+		<div class="btn-group inline pull-right">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-signin"></i> Entrar</a>
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+			<ul class="dropdown-menu" style="padding: 10px">
+				<form action="<?= View::makeUri('/auth/login') ?>" method="post">
+				<div class="input-prepend"><span class="add-on"><i class="icon-user"></i></span> <input type="text" name="email" placeholder="Email" /></div>
+				<div class="input-prepend"><span class="add-on"><i class="icon-lock"></i></span> <input type="password" name="password" placeholder="**********" /></div>
+				<small><a href="<?= View::makeUri('/auth/forgotpassword') ?>">¿Olvidaste tu contraseña?</a></small>
+				<button type="submit" class="btn pull-right">Entrar</button>
+				</form>
+			</ul>
+		</div>
+		<?php endif ?>
 		</div>
 		</div>
 	</header>
 
 	<div class="container">
 		<content>
-		<?php if ( Flight::get('error') ) : ?><span class="red"><i class="icon-exclamation-sign"></i> <?= Flight::get('error') ?></span><?php endif ?>
-		<?php foreach ( Flight::get('errores') as $error ) : ?>
-			<div class="alert alert-error"><i class="icon-exclamation-sign"></i> <?= View::e($error) ?></div>
+		<?php foreach ( Flight::flash('message') as $message ) : ?>
+			<div class="alert alert-<?= View::e($message['type']) ?>">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				<i class="icon-exclamation-sign"></i> <?= View::e($message['text']) ?>
+			</div>
 		<?php endforeach ?>
-		<?php if ( Flight::get('notice') ) : ?><span><i class="icon-exclamation-sign"></i> <?= Flight::get('notice') ?></span><?php endif ?>
+		<?php Flight::clearFlash('message') ?>
 		<?= $content ?>
 		</content>
 	</div>

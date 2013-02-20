@@ -60,14 +60,16 @@ class controller_pedido {
 			$view->set('user',$user);
 
 			if ( ! $enviado ) {
-				Flight::set('errores',array($error));
+				Flight::flash('message',array('type'=>'error','text'=>$error));
 				Flight::render('pedido_error',null,'layout');
 			} else {
 				Flight::render('pedido_success',null,'layout');
 			}
 
-		} else { 
-			Flight::set('errores',$errores);
+		} else {
+			foreach ( $errores as $err ) {
+				Flight::flash('message',array('type'=>'error','text'=>$err));
+			}
 			$view->set('datos',$datos);
 			self::showForm();
 		}
@@ -133,7 +135,7 @@ class controller_pedido {
 			$view->set('auth',$pedido->getUser()->getAuth());
 			Flight::render('pedido_confirmar',null,'layout');
 		} else {
-			Flight::set('errores',array('Pedido expirado o codigo de validación incorrecto.'));
+			Flight::flash('message',array('type'=>'error','text'=>'Pedido expirado o código de validación incorrecto.'));
 			Flight::render('pedido_error',null,'layout');
 		}
 	}

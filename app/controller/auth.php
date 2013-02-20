@@ -4,7 +4,7 @@ class controller_auth {
 
 	public function login() {
 		$data = Flight::request()->data;
-		$user = model_user::getByUsername($data['username']);
+		$user = model_user::getByEmail($data['email']);
 		if ( $user ) {
 			$auth = model_auth::getByUserId($user->id);
 			if ( $auth->checkPassword($data['password']) ) {
@@ -12,11 +12,11 @@ class controller_auth {
 				model_auth::clearFailed($user->id);
 				Flight::redirect(View::makeUri('/'));
 			} else {
-				Flight::set('errores',array('Email o contraseña incorrecta.'));
+				Flight::flash('message',array('type'=>'error','text'=>'Email o contraseña incorrecta.'));
 				model_auth::increaseFailed($user->id);
 			}
 		} else {
-			Flight::set('errores',array('Email o contraseña incorrecta.'));
+			Flight::flash('message',array('type'=>'error','text'=>'Email o contraseña incorrecta.'));
 		}
 
 		Flight::render('auth_login',null,'layout');
@@ -42,7 +42,7 @@ class controller_auth {
 			$auth->changePassword($data['newpassword']);
 			Flight::redirect(View::makeUri('/'));
 		} else {
-			Flight::set('errores',array('Error al cambiar la contraseña.'));
+			Flight::flash('message',array('type'=>'error','text'=>'Error al cambiar la contraseña.'));
 			Flight::render('auth_change',null,'layout');
 		}
 	}
@@ -56,8 +56,25 @@ class controller_auth {
 			Flight::redirect(View::makeUri('/pedidos'));
 		} else {
 			$view->set('auth',$auth);
-			Flight::set('errores',array('Error al crear la contraseña.'));
+			Flight::flash('message',array('type'=>'error','text'=>'Error al crear la contraseña.'));
 			Flight::render('auth_set',null,'layout');
+		}
+	}
+
+
+	public function forgotPassword() {
+		Flight::render('auth_forgot',null,'layout');
+	}
+
+	public function sendPassword() {
+		$data = Flight::request()->data;
+		$user = model_user::getByEmail($data['email']);
+		if ( $user ) {
+			Flight::flash('message',array('type'=>'success','text'=>'Revisa tu correo y crea tu nueva contraseña.'));
+			Flight::redirect(View::makeUri('/'));
+		} else {
+			Flight::flash('message',array('type'=>'error','text'=>'La dirección '.$data['email'].' no esta registrada en el sistema.'));
+			Flight::render('auth_forgot',null,'layout');
 		}
 	}
 }

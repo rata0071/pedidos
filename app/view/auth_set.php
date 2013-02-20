@@ -1,4 +1,4 @@
-<div class="alert alert-notice"><i class="icon-lightbulb icon-large"></i> Elije una contraseña. Te servira para revisar el estado de tus pedidos y hacer nuevos pedidos más facilmente.</div>
+<div class="alert alert-info"><i class="icon-lightbulb icon-large"></i> Elije una contraseña. Te servira para revisar el estado de tus pedidos y hacer nuevos pedidos más facilmente.</div>
 
 <form action="<?= View::makeUri('auth/newpassword') ?>" method="post">
 
