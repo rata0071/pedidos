@@ -47,4 +47,41 @@ class user extends Model {
 		$this->estado = 'confirmado';
 		$this->save();
 	}
+
+	public function getUltimosPedidos() {
+		$pedidos = Model::factory('pedido')->where('user_id',$this->id)->where_in('estado',array('sinconfirmar','confirmado','entregado'))->order_by_desc('created')->limit(5)->find_many();
+		return $pedidos;
+	}
+
+	public static function validar($datos) {
+		$ok = true;
+		$errores = array();
+
+		if ( mb_strlen($datos['nombre']) < 2 ) {
+			$ok = false;
+			$errores[] = 'El nombre es muy corto.';
+		}
+		if ( mb_strlen($datos['apellido']) < 2 ) {
+			$ok = false;
+			$errores[] = 'El apellido es muy corto.';
+		}
+		if ( mb_strlen($datos['telefono']) < 8 ) {
+			$ok = false;
+			$errores[] = 'Ingresa un teléfono válido.';
+		}
+		if ( mb_strlen($datos['direccion']) < 4 ) {
+			$ok = false;
+			$errores[] = 'La dirección no parece ser correcta.';
+		}
+		$u = model_user::getByEmail(trim($datos['email']));
+		if ( $u && $u->id != $datos['id'] ) {
+			$ok = false;
+			$errores[] = 'Ya existe un usuario registrado con el email '.trim($datos['email']).'.';
+		}
+		if ( ! isset($datos['id']) && preg_match("/[a-zA-Z0-9.!#$%&'*+-\/=?\^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*/",trim($datos['email'])) === 0 ) {
+			$ok = false;
+			$errores[] = 'Tu dirección de email no parece válida.';
+		}
+		return array($ok,$errores);
+	}
 }

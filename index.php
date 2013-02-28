@@ -21,6 +21,7 @@ require FLIGHT_PATH.'/Flight.php';
 require PARIS_PATH.'/paris.php';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . FLIGHT_PATH);
+set_include_path(get_include_path() . PATH_SEPARATOR . LIB_PATH);
 set_include_path(get_include_path() . PATH_SEPARATOR . APP_PATH);
 set_include_path(get_include_path() . PATH_SEPARATOR . APP_PATH . '/model');
 
@@ -30,10 +31,11 @@ Flight::set('flight.views.path', APP_PATH.'/view');
 
 /****  CONFIGURE YOUR DOMAIN AND DB HERE  ****/ 
 define ( 'DOMAIN', 'verde.esfriki.com' );
+define ( 'SITE', 'Vive Verde' );
 
-ORM::configure('mysql:host=db.esfriki.com;dbname=bkobras');
-ORM::configure('username', 'esfriki');
-ORM::configure('password', 'esFRIkipaNOTAGAIN');
+ORM::configure('mysql:host=localhost;dbname=pedidos');
+ORM::configure('username', 'root');
+ORM::configure('password', '');
 
 /****  AND DOWN THE RABBIT HOLE  ****/
 
@@ -47,6 +49,12 @@ Flight::route('GET /pedido',array('controller_pedido','nuevo'));
 Flight::route('POST /pedido',array('controller_pedido','encargar'));
 
 Flight::route('GET /pedido/@id:[0-9]+/confirmar',array('controller_pedido','confirmar'));
+Flight::route('GET /pedido/@id:[0-9]+/cancel',array('controller_pedido','cancelar'));
+
+Flight::route('GET /user/datos',array('controller_user','datos'));
+Flight::route('POST /user/update',array('controller_user','update'));
+
+// Metodos de autenticacion
 
 Flight::route('POST /auth/login/?$',array('controller_auth','login'));
 Flight::route('GET /auth/logout/?$',array('controller_auth','logout'));
@@ -55,5 +63,13 @@ Flight::route('GET /auth/password/?$',array('controller_auth','changeForm'));
 Flight::route('POST /auth/password/?$',array('controller_auth','change'));
 
 Flight::route('POST /auth/newpassword/?$', array('controller_auth','newpassword'));
+
+Flight::route('GET /auth/forgotpassword/?$', array('controller_auth','forgotpassword'));
+Flight::route('POST /auth/forgotpassword/?$', array('controller_auth','sendpassword'));
+
+Flight::route('GET /auth/@id:[0-9]+/setpassword/@c:[a-f0-9]+/?$', array('controller_auth','setpassword'));
+
+// Metodos de administracion
+Flight::route('GET /pedido/list/?$', array('controller_pedido','list'));
 
 Flight::start();

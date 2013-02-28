@@ -8,7 +8,11 @@ class model_auth {
 	}
 
 	public static function getCurrent() {
-		$auth = Model::factory('auth')->where('user_id', $_SESSION['user_id'])->find_one();
+		if ( isset($_SESSION['user_id']) ) {
+			$auth = Model::factory('auth')->where('user_id', $_SESSION['user_id'])->find_one();
+		} else {
+			$auth = Model::factory('auth')->create();
+		}
 		return $auth;
 	}
 
@@ -78,8 +82,8 @@ class auth extends Model {
 		return $_SESSION['logged'];
 	}
 
-	public static function getUser() {
-		return model_user::getById($_SESSION['user_id']);
+	public function getUser() {
+		return model_user::getById($this->user_id);
 	}
 	public static function newChallenge() {
 		return sha1(uniqid());
@@ -88,6 +92,10 @@ class auth extends Model {
 	public function resetChallenge() {
 		$this->challenge = self::newChallenge();
 		$this->save();
+	}
+
+	public function checkChallenge($c) {
+		return $this->challenge == trim($c);
 	}
 
 	public static function getCSRFToken() {
@@ -101,5 +109,31 @@ class auth extends Model {
 		} else {
 			return false;
 		}
+	}
+
+	public function sendPasswordEmail() {
+
+		$mail = mail::newmail();
+		$mail->AddAddress($this->getUser()->email, $this->getUser()->nombre);
+
+		$this->resetChallenge();
+		$link = $this->getChangePasswordLink();
+		$_link = View::e( $link );
+
+		$mail->Subject = "¿Olvidaste tu contraseña? - Vive Verde";
+		$mail->Body = 'Alguien (probablemente tú) pidio que se te enviara este email, si no quieres cambiar tu contraseña ignora este mensaje. <br /> <br /> Si en realidad olvidaste tu contraseña puedes cambiarla haciendo <a href="'.$_link.'" target="_blank">click aqui</a> o ingresando a esta dirección: '.$_link;
+		$mail->IsHTML(true);
+		$mail->AltBody = "Alguien (probablemente tú) pidio que se te enviara este email, si no quieres cambiar tu contraseña ifnora este mensaje. \n \n Si en realidad olvidaste tu contraseña puedes cambiarla ingresando a esta dirección: ".$link;
+
+		if(!$mail->Send()) {
+			error_log('Mailer error: '.$mail->ErrorInfo);
+			return array(false,'Mailer error: '.$mail->ErrorInfo);
+		} else {
+			return array(true,'');
+		}
+	}
+
+	public function getChangePasswordLink() {
+		return View::makeUri('/auth/'.$this->user_id.'/setpassword/'.$this->challenge);
 	}
 }

@@ -2,27 +2,49 @@
 
 class controller_pedido {
 
+	// Queremos crear un nuevo pedido
 	public function nuevo() {
 		$view = Flight::View();
-		$view->set('cantidades',$_GET['p']);
-		self::showForm();
-	}
 
-	public static function showForm() {
-		$view = Flight::View();
+		// Si ya tenemos datos los cargamos
+		if ( $datos =  Flight::flash('datos') ) {
+			$datos = array_pop($datos);
+			$view->set('datos',$datos);
+			Flight::clearFlash('datos');	
+		}
+
+		// Si esta logueado traemos los pedidos
+		$auth = model_auth::getCurrent();
+		if ( auth::isLoggedIn() ) {
+			$pedidos = $auth->getUser()->getUltimosPedidos();
+			$view->set('pedidos',$pedidos);
+		}
+
+		$view->set('token',$auth->getCSRFToken());
+		$view->set('cantidades',$_GET['p']);
 		$view->set('productos',model_producto::getAll());
-		$view->set('horarios',model_horario::getAllJson());
-		$view->set('barrios',model_barrio::getAllJson());
-		$view->set('recorridos',model_recorrido::getAllJson());
 		Flight::render('pedido_form',null,'layout');
 	}
 
+
+	// Creamos un pedido
 	public function encargar() {
 		$view = Flight::View();
 		$datos = Flight::request()->data;
-		list( $valido, $errores ) = self::validarPedido($datos);
 
-		if ( $valido ) {
+		// Validaciones
+		list( $valido, $errores ) = pedido::validar($datos);
+
+		if ( ! auth::isLoggedIn() ) {
+			list( $userValido, $userErrores ) = user::validar($datos);
+			$valido = $valido && $userValido;
+			$e = array_merge($errores, $userErrores);
+			$errores = $e;
+		}
+
+
+		if ( $valido ) { // Si el pedido es valido
+			// Creo el usuario o cargo los datos del usuario actual
 			if ( ! auth::isLoggedIn() ) {
 				$user = Model::factory('user')->create();
 				$user->email = trim($datos['email']);
@@ -34,17 +56,22 @@ class controller_pedido {
 				$auth->user_id = $user->id;
 				$auth->challenge = auth::newChallenge();
 				$auth->save();
+			} else {
+				$auth = model_auth::getCurrent();
+				$user = $auth->getUser();
 			}
 
+			// Cargo los datos del pedido
 			$pedido = Model::factory('pedido')->create();
 			$pedido->estado = 'sinconfirmar';
 			$pedido->user_id = $user->id;
-			$pedido->fecha_entrega = strtotime($datos['fecha_entrega']);
+			$pedido->fecha_entrega = $datos['fecha_entrega'];
 			$recorrido = model_recorrido::getFechaDisponible($datos['fecha_entrega'], $datos['horario_id'], $datos['barrio_id']);
 			$pedido->recorrido_id = $recorrido->id;
 			$pedido->observaciones = $datos['observaciones'];
 			$pedido->save();
 
+			// Cargo los productos y cantidades
 			foreach ( $datos['p'] as $producto_id => $cantidad ) {
 				if ( $cantidad > 0 ) {
 					$item = Model::factory('item')->create();
@@ -55,88 +82,57 @@ class controller_pedido {
 				}
 			}
 
+			// Enviamos la confirmacion y mostramos los mensajes
 			list ( $enviado, $error ) = $pedido->enviarConfirmacion();
-
-			$view->set('user',$user);
 
 			if ( ! $enviado ) {
 				Flight::flash('message',array('type'=>'error','text'=>$error));
-				Flight::render('pedido_error',null,'layout');
 			} else {
-				Flight::render('pedido_success',null,'layout');
+				Flight::flash('message',array('type'=>'success','text'=>'Revisa tu correo y confirma tu pedido','icon'=>'envelope'));
 			}
+
+			Flight::redirect('/');
 
 		} else {
 			foreach ( $errores as $err ) {
 				Flight::flash('message',array('type'=>'error','text'=>$err));
 			}
-			$view->set('datos',$datos);
-			self::showForm();
+			Flight::flash('datos',$datos);
+			Flight::redirect('/pedido');
 		}
 	}
-
-	public static function validarPedido( $datos ) {
-		$errores = array();
-		$ok = true;
-		if ( array_sum($datos[p]) < 1 ) {
-			$ok = false;
-			$errores[] = 'No seleccionaste ningun producto.';
-		}
-
-		if ( ! auth::isLoggedIn() ) {
-			if ( mb_strlen($datos['nombre']) < 2 ) {
-				$ok = false;
-				$errores[] = 'El nombre es muy corto.';
-			}
-			if ( mb_strlen($datos['apellido']) < 2 ) {
-				$ok = false;
-				$errores[] = 'El apellido es muy corto.';
-			}
-			if ( mb_strlen($datos['telefono']) < 8 ) {
-				$ok = false;
-				$errores[] = 'Ingresa un teléfono válido.';
-			}
-			if ( mb_strlen($datos['direccion']) < 4 ) {
-				$ok = false;
-				$errores[] = 'La dirección no parece ser correcta.';
-			}
-			if ( preg_match("/[a-zA-Z0-9.!#$%&'*+-\/=?\^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*/",trim($datos['email'])) === 0 ) {
-				$ok = false;
-				$errores[] = 'Tu dirección de email no parece válida.';
-			}
-			if ( model_user::getByEmail(trim($datos['email'])) ) {
-				$ok = false;
-				$errores[] = 'Ya existe un usuario registrado con el email '.trim($datos['email']).'.';
-			}
-		}
-
-		if ( ! model_recorrido::getFechaDisponible($datos['fecha_entrega'], $datos['horario_id'], $datos['barrio_id']) ) {
-			$ok = false;
-			$errores[] = 'El horario o fecha no esta disponible.';
-		}
-
-		return array( $ok, $errores);
-	}
-
 
 	public function confirmar ( $id ) {
 		$view = Flight::View();
 		$pedido = model_pedido::getById($id);
 
-		if ( $pedido && $pedido->checkChallenge($_GET['c']) && !$pedido->expiro()) {
+		if ( $pedido && $pedido->getUser()->getAuth()->checkChallenge($_GET['c']) && !$pedido->expiro()) {
 			$pedido->confirmar();
 			if ( $pedido->getUser()->sinPassword() ) {
 				$view->set('pedirpassword',true);
 				$pedido->getUser()->getAuth()->login();
+				$view->set('auth',$pedido->getUser()->getAuth());
 			}
 			if ( $pedido->getUser()->sinConfirmar() ) {
 				$pedido->getUser()->confirmar();
 			}
-			$view->set('auth',$pedido->getUser()->getAuth());
 			Flight::render('pedido_confirmar',null,'layout');
 		} else {
 			Flight::flash('message',array('type'=>'error','text'=>'Pedido expirado o código de validación incorrecto.'));
-			Flight::render('pedido_error',null,'layout');
+			Flight::redirect('/');
 		}
+	}
+
+	public function cancelar( $id ) {
+		$pedido = model_pedido::getById($id);
+		$auth = model_auth::getCurrent();
+		if ( $pedido && auth::isLoggedIn() && $pedido->getUser()->id == $auth->user_id && $auth->checkCSRFToken($_GET['csrftoken']) ) {
+			$pedido->estado = 'cancelado';
+			$pedido->save();
+			Flight::flash('message',array('type'=>'success','text'=>'El pedido ha sido cancelado.'));
+		} else {
+			Flight::flash('message',array('type'=>'error','text'=>'No puedes cancelar ese pedido.'));
+		}
+		Flight::redirect(View::makeUri('/pedido'));
 	}
 }

@@ -14,19 +14,21 @@ class model_pedido {
 class pedido extends Model {
 	private $user = false;
 
-	public function enviarConfirmacion() {
-		require( MAILER_PATH."/class.phpmailer.php" );
-		$mail = new PHPMailer();
+	public function items() {
+		return $this->has_many('item');
+	}
 
-		$mail->From = "pedidos@viveverde.com.ar";
-		$mail->FromName = "Vive Verde";
-		$mail->AddAddress($this->getUser()->email);
+	public function enviarConfirmacion() {
+		$mail = mail::newmail();
+		$mail->AddAddress($this->getUser()->email, $this->getUser()->nombre);
+
+		$this->getUser()->getAuth()->resetChallenge();
 		$link = $this->getConfirmacionLink();
 		$_link = View::e( $link );
 
+		$mail->IsHTML(true);
 		$mail->Subject = "Confirma tu pedido - Vive Verde";
 		$mail->Body = 'Por favor confirma que los datos de este pedido son correctos haciendo <a href="'.$_link.'" target="_blank">click aqui</a> o ingresando a esta dirección: '.$_link;
-		$mail->IsHTML(true);
 		$mail->AltBody = 'Por favor confirma que los datos de este *pedido son correctos* ingresando a esta direccion: '.$link;
 
 		if(!$mail->Send()) {
@@ -49,11 +51,7 @@ class pedido extends Model {
 	}
 
 	public function expiro() {
-		return strtotime($this->fecha_entrega) > time();
-	}
-
-	public function checkChallenge($c) {
-		return $this->getUser()->getAuth()->challenge == trim($c);
+		return strtotime($this->fecha_entrega) < time();
 	}
 
 	public function confirmar() {
@@ -61,5 +59,25 @@ class pedido extends Model {
 		$this->save();
 
 		$this->getUser()->getAuth()->resetChallenge();
+	}
+
+	public function puedeCancelar() {
+		return strtotime($this->fecha_entrega) > time();
+	}
+
+	public static function validar($datos) {
+		$errores = array();
+		$ok = true;
+		if ( array_sum($datos[p]) < 1 ) {
+			$ok = false;
+			$errores[] = 'No seleccionaste ningún producto.';
+		}
+
+		if ( ! model_recorrido::getFechaDisponible($datos['fecha_entrega'], $datos['horario_id'], $datos['barrio_id']) ) {
+			$ok = false;
+			$errores[] = 'El horario o fecha no esta disponible.';
+		}
+
+		return array( $ok, $errores);
 	}
 }

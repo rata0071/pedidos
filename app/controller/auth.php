@@ -38,9 +38,12 @@ class controller_auth {
 	public function change() {
 		$data = Flight::request()->data;
 		$auth = model_auth::getCurrent();
+
 		if ( $auth->checkPassword($data['password']) && $data['newpassword'] == $data['repeatpassword'] ) {
+			Flight::flash('message',array('type'=>'success','text'=>'Cambiesta tu contraseña con éxito ¡No la olvides!'));
 			$auth->changePassword($data['newpassword']);
 			Flight::redirect(View::makeUri('/'));
+
 		} else {
 			Flight::flash('message',array('type'=>'error','text'=>'Error al cambiar la contraseña.'));
 			Flight::render('auth_change',null,'layout');
@@ -51,9 +54,12 @@ class controller_auth {
 		$view = Flight::View();
 		$data = Flight::request()->data;
 		$auth = model_auth::getCurrent();
+
 		if ( $auth->checkCSRFToken($data['csrftoken']) && $data['password'] == $data['repeat'] ) {
+			Flight::flash('message',array('type'=>'success','text'=>'Cambiesta tu contraseña con éxito ¡No la olvides!'));
 			$auth->changePassword($data['password']);
-			Flight::redirect(View::makeUri('/pedidos'));
+			Flight::redirect(View::makeUri('/pedido'));
+
 		} else {
 			$view->set('auth',$auth);
 			Flight::flash('message',array('type'=>'error','text'=>'Error al crear la contraseña.'));
@@ -69,12 +75,37 @@ class controller_auth {
 	public function sendPassword() {
 		$data = Flight::request()->data;
 		$user = model_user::getByEmail($data['email']);
+
 		if ( $user ) {
-			Flight::flash('message',array('type'=>'success','text'=>'Revisa tu correo y crea tu nueva contraseña.'));
-			Flight::redirect(View::makeUri('/'));
+			list ( $sent, $err ) = $user->getAuth()->sendPasswordEmail();
+			if ( $sent ) {
+				Flight::flash('message',array('type'=>'success','text'=>'Revisa tu correo y crea tu nueva contraseña.'));
+				Flight::redirect(View::makeUri('/'));
+
+			} else {	
+				Flight::flash('message',array('type'=>'error','text'=>$err));
+				Flight::redirect(View::makeUri('/auth/forgotpassword'));
+			}
 		} else {
 			Flight::flash('message',array('type'=>'error','text'=>'La dirección '.$data['email'].' no esta registrada en el sistema.'));
 			Flight::render('auth_forgot',null,'layout');
 		}
+	}
+
+	public function setPassword( $id, $c ) {
+		$view = Flight::View();
+		$user = model_user::getById( $id );
+		if ( $user ) {
+			$auth = $user->getAuth();
+			if ( $auth->checkChallenge($c) ) {
+				$auth->login();
+				$view->set('auth',$auth);
+				Flight::render('auth_set',null,'layout');
+				return;
+			} 
+		}
+
+		Flight::flash('message',array('type'=>'error','text'=>'Oops... El link ha expirado prueba otra vez.'));
+		Flight::redirect(View::makeUri('/'));
 	}
 }

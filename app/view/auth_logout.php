@@ -1,2 +1,2 @@
-<h1>Saliste con exito</h1>
-<p>volvé pronto</p>
+<h1>Saliste con éxito</h1>
+<p>Vuelve pronto</p>

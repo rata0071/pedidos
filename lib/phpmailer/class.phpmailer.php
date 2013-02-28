@@ -1361,6 +1361,18 @@ class PHPMailer {
   public function CreateHeader() {
     $result = '';
 
+// AZA - http://stackoverflow.com/questions/9899768/phpmailer-sending-mail-to-spam-in-hotmail-how-to-fix
+$result .= $this->HeaderLine("Organization" , SITE); 
+$result .= $this->HeaderLine("Content-Transfer-encoding" , "8bit");
+$result .= $this->HeaderLine("Message-ID" , "<".md5(uniqid(time()))."@{$_SERVER['SERVER_NAME']}>");
+$result .= $this->HeaderLine("X-MSmail-Priority" , "Normal");
+$result .= $this->HeaderLine("X-Mailer" , "Microsoft Office Outlook, Build 11.0.5510");
+$result .= $this->HeaderLine("X-MimeOLE" , "Produced By Microsoft MimeOLE V6.00.2800.1441");
+$result .= $this->HeaderLine("X-Sender" , $this->Sender);
+$result .= $this->HeaderLine("X-AntiAbuse" , "This is a solicited email for - ".SITE." mailing list.");
+$result .= $this->HeaderLine("X-AntiAbuse" , "Servername - {$_SERVER['SERVER_NAME']}");
+$result .= $this->HeaderLine("X-AntiAbuse" , $this->Sender);
+
     // Set the boundaries
     $uniq_id = md5(uniqid(time()));
     $this->boundary[1] = 'b1_' . $uniq_id;

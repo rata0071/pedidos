@@ -18,13 +18,13 @@
 		<a href="<?= View::makeUri('/pedido') ?>">Hacer pedido</a>
 		<?php if ( auth::isLoggedIn() ) : ?>
 		<div class="btn-group inline pull-right">
-			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user"></i> <?= View::e(auth::getUser()->nombre) ?></a>
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user"></i> <?= View::e(model_auth::getCurrent()->getUser()->nombre) ?></a>
 			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
 			<ul class="dropdown-menu">
-				<li><a href="<?= View::makeUri('/pedidos') ?>"><i class="icon-truck"></i> Ver pedidos</a></li>
+				<li><a href="<?= View::makeUri('/pedido') ?>"><i class="icon-truck"></i> Ver pedidos</a></li>
 				<li class="divider"></li>
-				<li><a href="<?= View::makeUri('/user/datos') ?>"><i class="icon-info-sign"></i> Editar datos</a></li>
-				<li><a href="<?= View::makeUri('/auth/changepassword') ?>"><i class="icon-lock"></i> Cambiar contraseña</a></li>
+				<li><a href="<?= View::makeUri('/user/datos') ?>"><i class="icon-cog"></i> Cambiar datos</a></li>
+				<li><a href="<?= View::makeUri('/auth/password') ?>"><i class="icon-lock"></i> Cambiar contraseña</a></li>
 				<li class="divider"></li>
 				<li><a href="<?= View::makeUri('/auth/logout') ?>"><i class="icon-signout"></i> Salir</a></li>
 			</ul>
@@ -52,7 +52,7 @@
 		<?php foreach ( Flight::flash('message') as $message ) : ?>
 			<div class="alert alert-<?= View::e($message['type']) ?>">
 				<button type="button" class="close" data-dismiss="alert">&times;</button>
-				<i class="icon-exclamation-sign"></i> <?= View::e($message['text']) ?>
+				<i class="<?= isset($message['icon']) ? View::e('icon-'.$message['icon']) : 'icon-exclamation-sign' ?>"></i> <?= View::e($message['text']) ?>
 			</div>
 		<?php endforeach ?>
 		<?php Flight::clearFlash('message') ?>
@@ -64,10 +64,12 @@
 	</footer>
 
 	<script src="<?= View::makeUri('/assets/js/jquery.js') ?>"></script>
+	<script src="<?= View::makeUri('/assets/js/jqBootstrapValidation.js') ?>"></script>
 	<script>$(document).ready(function(){$('.dropdown-menu').find('form').click(function(e){e.stopPropagation();});});</script>
 	<script src="<?= View::makeUri('/assets/js/bootstrap.min.js') ?>"></script>
 	<script src="<?= View::makeUri('/assets/js/jquery-ui.js') ?>"></script>
-	<script src="http://servicios.usig.buenosaires.gob.ar/usig-js/dev/usig.AutoCompleterFull.min.js" type="text/javascript"></script>
+	<script src="http://servicios.usig.buenosaires.gob.ar/usig-js/dev/usig.AutoCompleterFull.min.js"></script>
 	<script src="<?= View::makeUri('/assets/js/main.js') ?>"></script>
+	<script src="<?= View::makeUri('/assets/js/validation.js') ?>"></script>
 </body>
 </html>
