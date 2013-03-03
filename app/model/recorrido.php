@@ -40,4 +40,12 @@ class model_recorrido {
 }
 
 class recorrido extends Model {
+	private $horario = false;
+
+	public function getHorario() {
+		if ( ! $this->horario ) {
+			$this->horario = model_horario::getById($this->horario_id);
+		}
+		return $this->horario;
+	}
 }

@@ -82,6 +82,10 @@ class auth extends Model {
 		return $_SESSION['logged'];
 	}
 
+	public function isAdmin() {
+		return (bool)$this->is_admin;
+	}
+
 	public function getUser() {
 		return model_user::getById($this->user_id);
 	}

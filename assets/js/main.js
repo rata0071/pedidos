@@ -1,8 +1,10 @@
 $(document).ready(function(){
 
 var d = new Date();
+//	traigo la fecha, la convierto a utc, la convierto a utc-3 le sumo 19 horas (hasta las 5 am devuelve mañana sino pasado)
+var mindate = new Date( d.getTime() + (d.getTimezoneOffset() * 60000) - (3600000 * 3) + (3600000 * 19) );
 
-// Si estamos en la pagina de pedidos
+// Si tenemos un campo direccion
 if ( $('#direccion').length != 0 ) {
 
 var semana = [0,0,0,0,0,0,0];
@@ -42,9 +44,9 @@ var cargarHorarios = function ( date ) {
 }
 
 // Se ejecuta al seleccionar un dia en el calendar
-var seleccionarDia = function(dateText, inst) {
+var seleccionarDia = function(dateText) {
 	$('#fecha_entrega').val(dateText);
-	cargarHorarios( $(this).datepicker('getDate') );
+	cargarHorarios( $('#calendar').datepicker('getDate') );
 }
 
 // Configura y carga el calendar
@@ -55,7 +57,7 @@ $("#calendar").datepicker( {
 	dateFormat: "yy-mm-dd",
 	beforeShowDay: mostrarDia,
 	onSelect: seleccionarDia,
-	minDate: "+1d",
+	minDate: mindate,
 });
 
 // Vuelve a cargar el calendar
@@ -77,7 +79,7 @@ var reloadCalendar = function () {
 	}
 	}
 	$('#calendar').datepicker("refresh");
-	cargarHorarios( $('#calendar').datepicker('getDate') );
+	seleccionarDia( $('#calendar').datepicker().val() );
 }
 
 // Nos devuelve el id interno del barrio devuelto por GMAPS
@@ -98,7 +100,7 @@ var cargarBarrio = function () {
 				$('#lat').val(results[0].geometry.location.lat());
 				$('#lng').val(results[0].geometry.location.lng());
 			}
-
+		console.log(results);
 			$(results[0].address_components).each(function(index,element){
 				if ( element.types.indexOf('neighborhood') != -1 ) {
 					barrio_id = getBarrioId(element.long_name);
@@ -152,7 +154,7 @@ var ac = new usig.AutoCompleter('direccion', {
 }); // autocompleter
 
 
-} // if #calendar
+} // if #direccion
 
 
 }); // ready

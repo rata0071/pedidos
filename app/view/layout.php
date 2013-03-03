@@ -5,6 +5,7 @@
 	<title>Vive Verde</title>
 	<meta name="description" content="Frutas y verduras a tu puerta, elegilas online." />
 
+	<script src="<?= View::makeUri('/assets/js/jquery.js') ?>"></script>
 	<link rel="stylesheet" href="<?= View::makeUri('/assets/css/bootstrap.min.css') ?>" />
 	<link rel="stylesheet" href="<?= View::makeUri('/assets/css/font-awesome.min.css') ?>" />
 	<link rel="stylesheet" href="<?= View::makeUri('/assets/css/ui-lightness/jquery-ui-1.10.0.custom.min.css') ?>" />
@@ -17,6 +18,15 @@
 		<a href="<?= View::makeUri('/') ?>">Inicio</a>
 		<a href="<?= View::makeUri('/pedido') ?>">Hacer pedido</a>
 		<?php if ( auth::isLoggedIn() ) : ?>
+			<?php if ( model_auth::getCurrent()->isAdmin() ) : ?>
+			<div class="btn-group inline pull-right">
+				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-lock"></i> Admin </a>
+				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="<?= View::makeUri('/admin/pedidos') ?>"><i class="icon-truck"></i> Pedidos</a></li>
+				</ul>
+			</div>
+			<?php endif ?>
 		<div class="btn-group inline pull-right">
 			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user"></i> <?= View::e(model_auth::getCurrent()->getUser()->nombre) ?></a>
 			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
@@ -63,13 +73,9 @@
 	<footer>
 	</footer>
 
-	<script src="<?= View::makeUri('/assets/js/jquery.js') ?>"></script>
 	<script src="<?= View::makeUri('/assets/js/jqBootstrapValidation.js') ?>"></script>
 	<script>$(document).ready(function(){$('.dropdown-menu').find('form').click(function(e){e.stopPropagation();});});</script>
 	<script src="<?= View::makeUri('/assets/js/bootstrap.min.js') ?>"></script>
 	<script src="<?= View::makeUri('/assets/js/jquery-ui.js') ?>"></script>
-	<script src="http://servicios.usig.buenosaires.gob.ar/usig-js/dev/usig.AutoCompleterFull.min.js"></script>
-	<script src="<?= View::makeUri('/assets/js/main.js') ?>"></script>
-	<script src="<?= View::makeUri('/assets/js/validation.js') ?>"></script>
 </body>
 </html>

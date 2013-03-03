@@ -7,6 +7,9 @@
 <input class="btn submit" type="submit" value="Guardar" />
 </form>
 
+<script src="http://servicios.usig.buenosaires.gob.ar/usig-js/dev/usig.AutoCompleterFull.min.js"></script>
+<script src="<?= View::makeUri('/assets/js/main.js') ?>"></script>
+<script src="<?= View::makeUri('/assets/js/validation.js') ?>"></script>
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
 <script>//<!--
 <?php

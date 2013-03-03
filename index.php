@@ -37,6 +37,7 @@ ORM::configure('mysql:host=localhost;dbname=pedidos');
 ORM::configure('username', 'root');
 ORM::configure('password', '');
 
+date_default_timezone_set('America/Argentina/Buenos_Aires');
 /****  AND DOWN THE RABBIT HOLE  ****/
 
 
@@ -70,6 +71,6 @@ Flight::route('POST /auth/forgotpassword/?$', array('controller_auth','sendpassw
 Flight::route('GET /auth/@id:[0-9]+/setpassword/@c:[a-f0-9]+/?$', array('controller_auth','setpassword'));
 
 // Metodos de administracion
-Flight::route('GET /pedido/list/?$', array('controller_pedido','list'));
+Flight::route('GET /admin/pedidos', array('controller_admin','pedidos'));
 
 Flight::start();

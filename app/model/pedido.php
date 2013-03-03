@@ -9,13 +9,40 @@ class model_pedido {
 	public static function getAll() {
 		return Model::factory('pedido')->find_many();
 	}
+
+	public static function search($q) {
+		$search = Model::factory('pedido')->join('user',array('user.id','=','pedido.user_id'));
+
+		if ( $q['fecha_entrega'] ) {
+			$search = $search->where('pedido.fecha_entrega',$q['fecha_entrega']);
+		}
+
+		if ( is_array($q['estado']) && count($q['estado']) ) {
+			$search = $search->where_in('pedido.estado',$q['estado']);
+		}
+
+		if ( $q['cliente'] ) {
+			$cliente = '%'.$q['cliente'].'%';
+			$search = $search->where_raw('(user.nombre LIKE ? OR user.apellido LIKE ? OR user.email LIKE ?)', array($cliente,$cliente,$cliente));
+		}
+
+		return $search->find_many();
+	}
 }
 
 class pedido extends Model {
-	private $user = false;
+	private $user = false, $horario = false;
 
 	public function items() {
 		return $this->has_many('item');
+	}
+
+	public function getHorario() {
+		if ( ! $this->horario ) {
+			$recorrido = model_recorrido::getById($this->recorrido_id);
+			$this->horario = $recorrido->getHorario();
+		}
+		return $this->horario;
 	}
 
 	public function enviarConfirmacion() {
@@ -51,7 +78,7 @@ class pedido extends Model {
 	}
 
 	public function expiro() {
-		return strtotime($this->fecha_entrega) < time();
+		return (strtotime($this->fecha_entrega) + (8*3600)) < time();
 	}
 
 	public function confirmar() {
@@ -62,7 +89,7 @@ class pedido extends Model {
 	}
 
 	public function puedeCancelar() {
-		return strtotime($this->fecha_entrega) > time();
+		return (strtotime($this->fecha_entrega) + (8*3600)) > time();
 	}
 
 	public static function validar($datos) {

@@ -50,10 +50,10 @@
 
 <h2>Productos</h2>
 <?php foreach ( $productos as $producto ) : ?>
-<span class="row-fluid">
-	<span class="span4"><?= View::e($producto->nombre) ?></span>
-	<span class="span4"><input class="input-smallest" type="number" value="<?= $datos ? (int)$datos['p'][$producto->id] : (int)$cantidades[$producto->id] ?>" name="p[<?= $producto->id ?>]"/></span>
-</span>
+<div class="row-fluid">
+	<div class="span4"><?= View::e($producto->nombre) ?></div>
+	<div class="span4"><input class="input-smallest" type="number" value="<?= $datos ? (int)$datos['p'][$producto->id] : (int)$cantidades[$producto->id] ?>" name="p[<?= $producto->id ?>]"/></div>
+</div>
 <?php endforeach ?>
 
 <h2>A donde enviarlo</h2>
@@ -62,45 +62,50 @@
 	<?php include('_user_form.php') ?>
 <?php else : ?>
 	<?php $user = model_auth::getCurrent()->getUser() ?>
-<span class="row-fluid">
+<div class="row-fluid">
 	<div class="input-prepend span4"><span class="add-on"><i class="icon-user"></i> Nombre </span> <input type="text" name="nombre" value="<?= View::e($user->nombre) ?>" disabled="disabled" /></div>
 	<div class="input-prepend span4"><span class="add-on"><i class="icon-user"></i> Apellido </span> <input type="text" name="apellido" value="<?= View::e($user->apellido)  ?>" disabled="disabled" /></div>
-</span>
+</div>
 
-<span class="row-fluid">
+<div class="row-fluid">
 	<div class="input-prepend span4"><span class="add-on"><i class="icon-home"></i> Dirección </span> <input type="text" name="direccion" id="direccion" value="<?= View::e($user->direccion) ?>" disabled="disabled" /></div>
 	<input type="hidden" name="barrio_id" id="barrio_id" value="<?= View::e($user->barrio_id) ?>" />
 	<div class="input-prepend span2"><span class="add-on"><i class="icon-home"></i> Piso </span> <input type="text" class="input-small" name="piso" value="<?= View::e($user->piso) ?>" disabled="disabled" /></div>
 	<div class="input-prepend span2"><span class="add-on"><i class="icon-home"></i> Depto</span> <input type="text" class="input-small" name="depto" value="<?= View::e($user->depto) ?>" disabled="disabled" /></div>
-</span>
+</div>
 
-<span class="row-fluid">
+<div class="row-fluid">
 	<div class="input-prepend span4"><span class="add-on"><i class="icon-phone"></i> Telefono </span> <input type="text" name="telefono" value="<?= View::e($user->telefono) ?>" disabled="disabled" /></div>
 	<div class="input-prepend span4"><span class="add-on"><i class="icon-envelope"></i> Email </span> <input type="text" name="email" value="<?= View::e($user->email) ?>" disabled="disabled" /></div>
-</span>
+</div>
 <small class="row-fluid"><a href="<?= View::makeUri('/user/datos') ?>"><i class="icon-cog"></i> Cambiar datos personales</a></small>
 <?php endif ?>
 <br />
-<span class="row-fluid">
+<div class="row-fluid">
 	<div class="span8">
 		<p><i class="icon-pencil"></i> Observaciones, codigo de promoción, etc.</p>
 		<textarea rows="3" class="input-block-level" name="observaciones"><?= $datos ? View::e($datos['observaciones']) : '' ?></textarea>
 	</div>
-</span>
+	<div class="clear"> </div>
+</div>
 
 <h2>Cuando entregarlo</h2>
 
-<span class="row-fluid">
-	<span class="span3" id="calendar"></span>
-	<span class="span3" id="horarios_disponibles"></span>
+<div class="row-fluid">
+	<div class="span3" id="calendar"></div>
+	<div class="span3" id="horarios_disponibles"></div>
 	<input type="hidden" name="fecha_entrega" id="fecha_entrega" value="<?= $datos ? View::e($datos['fecha_entrega']) : '' ?>" />
 	<input type="hidden" name="selected_horario_id" id="selected_horario_id" value="<?= $datos ? View::e($datos['horario_id']) : '' ?>" />
-</span>
+	<div class="clear"> </div>
+</div>
 <input type="hidden" name="csrftoken" value="<?= $token ?>" />
 <br />
 <input type="submit" value="Hacer pedido" class="btn submit" />
 </form>
 
+<script src="http://servicios.usig.buenosaires.gob.ar/usig-js/dev/usig.AutoCompleterFull.min.js"></script>
+<script src="<?= View::makeUri('/assets/js/main.js') ?>"></script>
+<script src="<?= View::makeUri('/assets/js/validation.js') ?>"></script>
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
 <script>//<!--
 <?php
