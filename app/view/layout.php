@@ -45,9 +45,11 @@
 			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
 			<ul class="dropdown-menu" style="padding: 10px">
 				<form action="<?= View::makeUri('/auth/login') ?>" method="post">
-				<div class="input-prepend"><span class="add-on"><i class="icon-user"></i></span> <input type="text" name="email" placeholder="Email" /></div>
-				<div class="input-prepend"><span class="add-on"><i class="icon-lock"></i></span> <input type="password" name="password" placeholder="**********" /></div>
-				<small><a href="<?= View::makeUri('/auth/forgotpassword') ?>">¿Olvidaste tu contraseña?</a></small>
+				<div class="input-prepend"><span class="add-on"><i class="icon-user"></i></span> <input type="text" name="email" placeholder="Email" /></div> <br />
+				<div class="input-prepend"><span class="add-on"><i class="icon-lock"></i></span> <input type="password" name="password" placeholder="**********" /></div> <br />
+
+				<small><a href="<?= View::makeUri('/auth/forgotpassword') ?>">¿Olvidaste tu contraseña?</a></small> <br />
+
 				<button type="submit" class="btn pull-right">Entrar</button>
 				</form>
 			</ul>

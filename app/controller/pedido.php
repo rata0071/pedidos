@@ -107,15 +107,20 @@ class controller_pedido {
 		$pedido = model_pedido::getById($id);
 
 		if ( $pedido && $pedido->getUser()->getAuth()->checkChallenge($_GET['c']) && !$pedido->expiro()) {
+
 			$pedido->confirmar();
+			$pedido->getUser()->getAuth()->resetChallenge();
+
 			if ( $pedido->getUser()->sinPassword() ) {
 				$view->set('pedirpassword',true);
 				$pedido->getUser()->getAuth()->login();
 				$view->set('auth',$pedido->getUser()->getAuth());
 			}
+
 			if ( $pedido->getUser()->sinConfirmar() ) {
 				$pedido->getUser()->confirmar();
 			}
+
 			Flight::render('pedido_confirmar',null,'layout');
 		} else {
 			Flight::flash('message',array('type'=>'error','text'=>'Pedido expirado o código de validación incorrecto.'));
@@ -127,8 +132,7 @@ class controller_pedido {
 		$pedido = model_pedido::getById($id);
 		$auth = model_auth::getCurrent();
 		if ( $pedido && auth::isLoggedIn() && $pedido->getUser()->id == $auth->user_id && $auth->checkCSRFToken($_GET['csrftoken']) ) {
-			$pedido->estado = 'cancelado';
-			$pedido->save();
+			$pedido->cancelar();
 			Flight::flash('message',array('type'=>'success','text'=>'El pedido ha sido cancelado.'));
 		} else {
 			Flight::flash('message',array('type'=>'error','text'=>'No puedes cancelar ese pedido.'));

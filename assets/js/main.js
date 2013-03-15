@@ -1,6 +1,9 @@
 $(document).ready(function(){
 
 var d = new Date();
+
+// CALENDARIO
+
 //	traigo la fecha, la convierto a utc, la convierto a utc-3 le sumo 19 horas (hasta las 5 am devuelve mañana sino pasado)
 var mindate = new Date( d.getTime() + (d.getTimezoneOffset() * 60000) - (3600000 * 3) + (3600000 * 19) );
 
@@ -24,24 +27,6 @@ var mostrarDia = function ( date ) {
 	}
 }
 
-// Carga los horarios disponibles para el dia seleccionado
-var cargarHorarios = function ( date ) {
-	horariosDisponiblesField = $('#horarios_disponibles');
-	barrioId = barrioField.val();
-	diaSeleccionado = date.getDay();
-	r = recorridos[barrioId];
-	horariosDisponiblesField.html('');
-
-	// Para todos los recorridos de este barrio
-	for ( horario in r ) {
-	if (r.hasOwnProperty(horario)) {
-		// Si hay recorrido el dia seleccionado lo agrego
-		if ( r[horario][nombreDias[diaSeleccionado]] > 0 ) {
-			horariosDisponiblesField.append(horarios[horario] + ' <input type="radio" name="horario_id" value="'+horario+'" />');
-		}
-	}
-	}
-}
 
 // Se ejecuta al seleccionar un dia en el calendar
 var seleccionarDia = function(dateText) {
@@ -49,23 +34,13 @@ var seleccionarDia = function(dateText) {
 	cargarHorarios( $('#calendar').datepicker('getDate') );
 }
 
-// Configura y carga el calendar
-$("#calendar").datepicker( { 
-	monthNames:["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"], 
-	dayNames: ["Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"], 
-	dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
-	dateFormat: "yy-mm-dd",
-	beforeShowDay: mostrarDia,
-	onSelect: seleccionarDia,
-	minDate: mindate,
-});
-
 // Vuelve a cargar el calendar
 var reloadCalendar = function () {
+	if ( $('#calendar').length != 0 ) {
+
 	semana = [0,0,0,0,0,0,0];
 	barrioId = barrioField.val();
 	r = recorridos[barrioId];
-
 	// sumamos los dias de recorridos de todos los horarios del barrio
 	for ( horario in r ) {
 	if (r.hasOwnProperty(horario)) {
@@ -80,6 +55,57 @@ var reloadCalendar = function () {
 	}
 	$('#calendar').datepicker("refresh");
 	seleccionarDia( $('#calendar').datepicker().val() );
+
+	}
+}
+
+// Configura y carga el calendar
+$("#calendar").datepicker( { 
+	monthNames:["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"], 
+	dayNames: ["Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"], 
+	dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
+	dateFormat: "yy-mm-dd",
+	beforeShowDay: mostrarDia,
+	onSelect: seleccionarDia,
+	minDate: mindate,
+});
+
+
+// HORARIOS
+
+// Carga los horarios disponibles para el dia seleccionado
+var cargarHorarios = function ( date ) {
+	horariosDisponiblesField = $('#horarios_disponibles');
+	barrioId = barrioField.val();
+	diaSeleccionado = date.getDay();
+	r = recorridos[barrioId];
+	horariosDisponiblesField.html('');
+
+	// Para todos los recorridos de este barrio
+	for ( horario in r ) {
+	if (r.hasOwnProperty(horario)) {
+		// Si hay recorrido el dia seleccionado lo agrego
+		if ( r[horario][nombreDias[diaSeleccionado]] > 0 ) {
+			horariosDisponiblesField.append( '<input type="radio" name="horario_id" value="'+horario+'" /> <span class="label"><i class="icon-time"/> '+ horarios[horario] +'</span><br />' );
+		}
+	}
+	}
+}
+
+
+// BARRIOS
+
+// Guarda el id del barrio en el campo
+var setBarrioId = function ( id ) {
+	if ( id ) {
+		$('#barrio_id').val( id );
+		hideBarrios();
+	} else {
+		$('#barrio_id').val(0);
+		showBarrios();
+	}
+
+	reloadCalendar();
 }
 
 // Nos devuelve el id interno del barrio devuelto por GMAPS
@@ -91,44 +117,51 @@ var getBarrioId = function ( barrio ) {
 	}
 }
 
+// Mostrar el select de barrios
+var showBarrios = function () {
+	$('#barrios_select').show();
+}
+var hideBarrios = function () {
+	$('#barrios_select').hide();
+}
+
+// Trae el barrio segun la direccion
 var cargarBarrio = function () {
 	direccion = $('#direccion').val() + ', Ciudad Autónoma de Buenos Aires, Argentina';
 	geocoder.geocode( { 'address': direccion }, function(results, status) {
+		var barrio_id = 0;
+
 		if (status == google.maps.GeocoderStatus.OK) {
 
+			// Si es una dirección precisa guardo la lat y lng
 			if ( results[0].geometry.location_type == google.maps.GeocoderLocationType.ROOFTOP || results[0].geometry.location_type == google.maps.GeocoderLocationType.RANGE_INTERPOLATED ) {
 				$('#lat').val(results[0].geometry.location.lat());
 				$('#lng').val(results[0].geometry.location.lng());
+			} else {
+				$('#lat').val(0);
+				$('#lng').val(0);
 			}
-		console.log(results);
+
+			var total = $(results[0].address_components).length;
 			$(results[0].address_components).each(function(index,element){
+
 				if ( element.types.indexOf('neighborhood') != -1 ) {
 					barrio_id = getBarrioId(element.long_name);
-			
-					if ( barrio_id ) {
-						$('#barrio').val(element.long_name);
-						$('#barrio_id').val(barrio_id);
-						if ( $('#calendar').length != 0 ) {
-							reloadCalendar();
-						}
-						return;
-					} else {
-						// El barrio no esta en la aplicacion
-					}
+				}
+
+				// ultimo elemento
+				if ( index === total - 1 ) {
+					setBarrioId( barrio_id );
 				}
 			});
-		} else {
-			// La direccion es incorrecta o no la reconoce GMAPS
-			// No sabemos el barrio
 		}
 	});
-
 }
 
 // Revisamos los datos del pedido cuando carga la pagina
-if ( typeof($('#direccion').val()) != 'undefined' ) {
+if ( $('#direccion').val().length > 0 ) {
 	barrioId = barrioField.val();
-	if ( barrioId != 0 && $('#calendar').length != 0 ) {
+	if ( typeof(barrioId) != 'undefined' && barrioId != 0 ) {
 		reloadCalendar();
 	} else {
 		cargarBarrio();
@@ -140,17 +173,12 @@ $('#direccion').on('change',cargarBarrio);
 
 var ac = new usig.AutoCompleter('direccion', {
 	afterSelection: function(option) {
-	if (option instanceof usig.Direccion || option instanceof usig.inventario.Objeto) {
-		$('#calle').val(option.getCalle().nombre);
-		$('#numero').val(option.getAltura());
-		cargarBarrio();
-	} else {
-		// La direccion es incorrecta o no la reconoce el USIG
-		// No sabemos la calle y numero!!
-		// Cargamos el barrio igual!!
+		if (option instanceof usig.Direccion || option instanceof usig.inventario.Objeto) {
+			$('#calle').val(option.getCalle().nombre);
+			$('#numero').val(option.getAltura());
+		}
 		cargarBarrio();
 	}
-	} // afterSelection
 }); // autocompleter
 
 

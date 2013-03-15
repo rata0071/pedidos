@@ -6,7 +6,7 @@ class model_barrio {
 		return Model::factory('barrio')->where('id', $id)->find_one();
 	}
 	public static function getAll() {
-		return Model::factory('barrio')->find_many();
+		return Model::factory('barrio')->order_by_asc('nombre')->find_many();
 	}
 	public static function getAllJson() {
 		$barrios = self::getAll();

@@ -22,6 +22,7 @@
 			<span class="add-on control-label"><i class="icon-home"></i> Dirección </span> 
 			<input type="text" name="direccion" id="direccion" required data-validation-required-message="Por favor ingresa la dirección de entrega." value="<?= $datos ? View::e($datos['direccion']) : '' ?>" />
 		</div>
+		<small><i class="icon-exclamation-sign"></i> Ingresa calle y número</small>
 		<p class="help-block"></p>
 	</div>
 	<div class="control-group span2">
@@ -39,13 +40,29 @@
 
 	<input type="hidden" name="calle" id="calle" value="<?= $datos ? View::e($datos['calle']) : '' ?>" />
 	<input type="hidden" name="numero" id="numero" value="<?= $datos ? View::e($datos['numero']) : '' ?>" />
-	<input type="hidden" name="barrio" id="barrio" value="<?= $datos ? View::e($datos['barrio']) : '' ?>" />
 	<input type="hidden" name="barrio_id" id="barrio_id" value="<?= $datos ? View::e($datos['barrio_id']) : '0' ?>" />
 	<input type="hidden" name="lat" id="lat" value="<?= $datos ? View::e($datos['lat']) : '0' ?>" />
 	<input type="hidden" name="lng" id="lng" value="<?= $datos ? View::e($datos['lng']) : '0' ?>" />
 	<?php if ( $update ) : ?>
 		<input type="hidden" name="id" value="<?= $datos['id'] ?>" />
 	<?php endif ?>
+</div>
+
+<div class="row-fluid hide" id="barrios_select">
+	<div class="span4">
+		<select name="barrio">
+			<option>-- elige tu barrio --</option>
+			<option>Otro</option>
+		<?php foreach ( model_barrio::getAll() as $barrio ) : ?>
+			<option value="<?= $barrio->id ?>"><?php echo View::e($barrio->nombre) ?></option>
+		<?php endforeach ?>
+		</select>
+	</div>
+	<div class="span4">
+		<div class="alert alert-warning">
+			<i class="icon-exclamation-sign"></i> Asegurate que la dirección es correcta y elige tu barrio.
+		</div>
+	</div>
 </div>
 
 <div class="row-fluid">

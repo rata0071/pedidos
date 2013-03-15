@@ -3,15 +3,17 @@
 class model_pedido {
 
 	public static function getById( $id ) {
-		$pedido = Model::factory('pedido')->where('id', $id)->find_one();
-		return $pedido;
+		return Model::factory('pedido')->find_one( $id );
 	}
+
 	public static function getAll() {
 		return Model::factory('pedido')->find_many();
 	}
 
 	public static function search($q) {
-		$search = Model::factory('pedido')->join('user',array('user.id','=','pedido.user_id'));
+		$search = ORM::for_table('pedido')->select('pedido.id')->
+			join('user',array('user.id','=','pedido.user_id'))->
+			join('recorrido',array('recorrido.id','=','pedido.recorrido_id'));
 
 		if ( $q['fecha_entrega'] ) {
 			$search = $search->where('pedido.fecha_entrega',$q['fecha_entrega']);
@@ -26,7 +28,16 @@ class model_pedido {
 			$search = $search->where_raw('(user.nombre LIKE ? OR user.apellido LIKE ? OR user.email LIKE ?)', array($cliente,$cliente,$cliente));
 		}
 
-		return $search->find_many();
+		if ( is_array($q['horario']) && count($q['horario']) ) {
+			$search = $search->where_in('recorrido.horario_id',$q['horario']);
+		}
+	
+		$return = array();
+		foreach ( $search->find_many() as $pedido ) {
+			$return[] = Model::factory('pedido')->find_one($pedido->id);
+		}
+
+		return $return;
 	}
 }
 
@@ -81,13 +92,6 @@ class pedido extends Model {
 		return (strtotime($this->fecha_entrega) + (8*3600)) < time();
 	}
 
-	public function confirmar() {
-		$this->estado = 'confirmado';
-		$this->save();
-
-		$this->getUser()->getAuth()->resetChallenge();
-	}
-
 	public function puedeCancelar() {
 		return (strtotime($this->fecha_entrega) + (8*3600)) > time();
 	}
@@ -106,5 +110,26 @@ class pedido extends Model {
 		}
 
 		return array( $ok, $errores);
+	}
+
+	public function confirmar() {
+		$this->estado = 'confirmado';
+		$this->save();
+
+	}
+
+	public function enviar() {
+		$this->estado = 'enviaje';
+		$this->save();
+	}
+
+	public function entregado() {
+		$this->estado = 'entregado';
+		$this->save();
+	}
+
+	public function cancelar() {
+		$this->estado = 'cancelado';
+		$this->save();
 	}
 }

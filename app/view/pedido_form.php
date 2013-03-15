@@ -80,6 +80,15 @@
 </div>
 <small class="row-fluid"><a href="<?= View::makeUri('/user/datos') ?>"><i class="icon-cog"></i> Cambiar datos personales</a></small>
 <?php endif ?>
+<div class="row-fluid">
+<div class="span4">
+¿Te lo llevamos o lo pasas a buscar?
+<select name="tipo" id="tipo-pedido">
+	<option value="entrega" id="tipo-entrega">Entrega a domicilio</option>
+	<option value="retiro">Retirar por local</option>
+</select>
+</div>
+</div>
 <br />
 <div class="row-fluid">
 	<div class="span8">
@@ -92,8 +101,8 @@
 <h2>Cuando entregarlo</h2>
 
 <div class="row-fluid">
-	<div class="span3" id="calendar"></div>
-	<div class="span3" id="horarios_disponibles"></div>
+	<div class="span4" id="calendar"></div>
+	<div class="span4" id="horarios_disponibles"></div>
 	<input type="hidden" name="fecha_entrega" id="fecha_entrega" value="<?= $datos ? View::e($datos['fecha_entrega']) : '' ?>" />
 	<input type="hidden" name="selected_horario_id" id="selected_horario_id" value="<?= $datos ? View::e($datos['horario_id']) : '' ?>" />
 	<div class="clear"> </div>
@@ -108,12 +117,7 @@
 <script src="<?= View::makeUri('/assets/js/validation.js') ?>"></script>
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
 <script>//<!--
-<?php
-		$horarios = model_horario::getAllJson();
-		$barrios = model_barrio::getAllJson();
-		$recorridos = model_recorrido::getAllJson();
-?>
-var barrios = <?= $barrios ?>,
-	horarios = <?= $horarios ?>,
-	recorridos = <?= $recorridos ?>;
+var barrios = <?= model_barrio::getAllJson() ?>,
+	horarios = <?= model_horario::getAllJson() ?>,
+	recorridos = <?= model_recorrido::getAllJson() ?>;
 //--></script>

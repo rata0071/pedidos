@@ -32,6 +32,8 @@ class user extends Model {
 		$this->piso = trim($datos['piso']);
 		$this->depto = trim($datos['depto']);
 		$this->barrio_id = (int)$datos['barrio_id'];
+		$this->lat = (double)$datos['lat'];
+		$this->lng = (double)$datos['lng'];
 		return;
 	}
 

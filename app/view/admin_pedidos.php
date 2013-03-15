@@ -1,15 +1,19 @@
 
-
 <ul class="nav nav-tabs">
-	<li><a href="#filtro" data-toggle="tab">Filtros</a></li>
-	<li><a href="#mapa" data-toggle="tab" id="tab-mapa">Mapa</a></li>
+	<li class="active"><a href="#filtro" data-toggle="tab"><i class="icon-eye-open"></i> Filtros</a></li>
+	<li><a href="#mapa" data-toggle="tab" id="tab-mapa"><i class="icon-map-marker"></i> Mapa</a></li>
+	<li><a href="#hide" data-toggle="tab"><i class="icon-caret-up"></i> Esconder</a></li>
 </ul>
+
 <div class="tab-content">
 
-<div class="tab-pane" id="filtro">
-<form action="<?= View::makeUri('/admin/pedidos') ?>" method="get">
+<div class="tab-pane" id="hide">
+</div>
+
+<div class="tab-pane active" id="filtro">
 <div class="row-fluid">
-	<div class="span2">
+<form action="<?= View::makeUri('/admin/pedidos') ?>" method="get">
+	<div class="span3">
 		<div class="input-prepend"><span class="add-on"><i class="icon-calendar"></i></span> <input class="input-medium" id="filtro_fecha_entrega" type="text" name="q[fecha_entrega]" value="<?= View::e($q['fecha_entrega']) ?>" /></div>
 	</div>
 
@@ -31,38 +35,52 @@
 	</div>
 
 	<div class="span2">
-		<div class="input-prepend"><span class="add-on"><i class="icon-user"></i></span><input class="input-medium" type="text" name="q[cliente]" value="<?= View::e($q['cliente']) ?>" /></div>
-		<small><i class="icon-info-sign"></i> Busca nombre, apellido o mail.</small>
-	<div>
-	<div class="span2">
-		<input type="submit" value="Filtrar" class="btn submit" />
+		<?php foreach ( model_horario::getAll() as $horario ) : ?>
+		<input type="checkbox" name="q[horario][]" value="<?= $horario->id ?>" <?= in_array($horario->id,$q['horario']) ? 'checked' : '' ?> />
+		<span class="label"><i class="icon-time"></i> <?= $horario->descripcion ?></span><br />
+		<?php endforeach ?>
 	</div>
-</div>
+	<div class="span3">
+		<div class="input-prepend"><span class="add-on"><i class="icon-user"></i></span><input class="input-large" type="text" name="q[cliente]" value="<?= View::e($q['cliente']) ?>" /></div><br />
+		<small><i class="icon-info-sign"></i> Busca nombre, apellido o mail.</small>
+	</div>
+	<div class="span2">
+		<input type="submit" value="Filtrar" class="btn submit pull-right" />
+	</div>
 </form>
+</div>
 </div>
 
 <div class="tab-pane" id="mapa">
 <div class="row-fluid">
-	<div class="span12" style="height:350px" id="map_canvas">
+	<div class="span12" style="height:480px" id="map_canvas">
 	</div>
 </div>
 </div>
 
-<form action="<?= View::makeUri('/admin/actualizar') ?>" method="post">
+</div>
+
+<br />
+
+<!-- end tabs -->
+<form action="<?= View::makeUri('/admin/actualizar') ?>" method="post" id="accion-form">
 <div class="row-fluid">
-	<div class="offset9 span2">
+	<div class="offset8 span3">
 		<div class="input-prepend"><span class="add-on"><i class="icon-cog"></i></span>
-		<select name="action" class="input-medium">
+		<select name="action" class="input-medium" id="accion-select">
 			<option>-- acciones --</option>
+			<option value="confirmar">Confirmar</option>
 			<option value="enviar">Enviar</option>
 			<option value="entregado">Entregado</option>
+			<option value="cancelar">Cancelar</option>
 		</select>
 		</div>
 	</div>
 	<div class="span1">
-	<input type="submit" value="Aplicar" class="btn submit btn-danger" />
+	<input type="submit" value="Aplicar" id="boton-aplicar" class="btn submit btn-danger" />
 	</div>
 </div>
+
 <table class="table table-hover">
 <thead>
 <tr>
@@ -102,7 +120,7 @@
 			<?php else : 
 				echo View::e($p->estado);
 			 endif ?>
-			 <input class="pull-right" type="checkbox" name="pedido[]" value="<?= $p->id ?>" />
+			 <input class="pull-right pedido-checkbox" type="checkbox" name="pedido[]" id="pedido-<?= $p->id ?>-check" value="<?= $p->id ?>" />
 		</td>
 	</tr>
 <?php endforeach ?>
@@ -111,5 +129,31 @@
 
 </form>
 
+
+<div id="modal-confirmar" class="modal hide fade">
+    <div class="modal-header">
+      <a href="#" class="close">&times;</a>
+      <h3>Confirma la acción</h3>
+    </div>
+    <div class="modal-body">
+      <p>Seleccionaste la siguiente acción: <strong id="accion-seleccionada"></strong></p>
+      <p>¿Queres seguir?</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" id="accion-submit" class="btn btn-danger">Si</a>
+      <a href="#" id="accion-cancel" class="btn">No</a>
+    </div>
+</div>
+
+<script>//<!--
+var markers = [
+<?php foreach ( $pedidos as $p ) : ?>
+<?php if ( $p->getUser()->lat && $p->getUser()->lng ) : ?>
+<?= '{id:'.$p->id.', lat: '.$p->getUser()->lat.', lng: '.$p->getUser()->lng.'},' ?>
+<?php endif ?>
+<?php endforeach ?>
+];
+//-->
+</script>
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <script src="<?= View::makeUri('/assets/js/admin.js') ?>"></script>
