@@ -31,7 +31,7 @@ Flight::set('flight.views.path', APP_PATH.'/view');
 
 /****  CONFIGURE YOUR DOMAIN AND DB HERE  ****/ 
 define ( 'DOMAIN', 'verde.esfriki.com' );
-define ( 'SITE', 'Vive Verde' );
+define ( 'SITE', 'Viveverde' );
 
 ORM::configure('mysql:host=localhost;dbname=pedidos');
 ORM::configure('username', 'root');
@@ -54,6 +54,13 @@ Flight::route('GET /pedido/@id:[0-9]+/cancel',array('controller_pedido','cancela
 
 Flight::route('GET /user/datos',array('controller_user','datos'));
 Flight::route('POST /user/update',array('controller_user','update'));
+
+// Paginas estaticas
+
+Flight::route('GET /ecobolsa',array('controller_layout','ecobolsa'));
+Flight::route('GET /como-comprar',array('controller_layout','comocomprar'));
+Flight::route('GET /quienes-somos',array('controller_layout','quienessomos'));
+Flight::route('GET /contacto',array('controller_layout','contacto'));
 
 // Metodos de autenticacion
 
