@@ -97,7 +97,7 @@
 	<tr>
 		<td><?= $p->fecha_entrega == date('Y-m-d') ? 'Hoy' : View::e($p->fecha_entrega) ?></td>
 		<td><?= View::e($p->getHorario()->descripcion) ?></td>
-		<td><?= View::e($p->getUser()->nombre.' '.$p->getUser()->apellido) ?></td>
+		<td><?= View::e($p->getUser()->nombre.' '.$p->getUser()->apellido) ?> <a class="user-info btn btn-small" title="Datos del usuario" data-user-id="<?= (int)$p->getUser()->id ?>"><i class="icon-info-sign"></i></a></td>
 		<td><?= View::e($p->getUser()->direccion) ?></td>
 		<td>
 		<ul>
@@ -132,7 +132,7 @@
 
 <div id="modal-confirmar" class="modal hide fade">
     <div class="modal-header">
-      <a href="#" class="close">&times;</a>
+      <a href="#" class="close" data-dismiss="modal">&times;</a>
       <h3>Confirma la acción</h3>
     </div>
     <div class="modal-body">
@@ -142,6 +142,17 @@
     <div class="modal-footer">
       <a href="#" id="accion-submit" class="btn btn-danger">Si</a>
       <a href="#" id="accion-cancel" class="btn">No</a>
+    </div>
+</div>
+
+<div id="modal-user" class="modal hide fade">
+    <div class="modal-header">
+      <a href="#" class="close" data-dismiss="modal">&times;</a>
+      <h3 id="modal-user-nombre">Cargando datos del usuario...</h3>
+    </div>
+    <div class="modal-body">
+    </div>
+    <div class="modal-footer">
     </div>
 </div>
 

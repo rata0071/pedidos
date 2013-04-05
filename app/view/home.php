@@ -1,13 +1,15 @@
-<h1>Home</h1>
 
-<div class="row-fluid">
-<?php foreach ( $productos as $producto ) : ?>
-	<div class="span4">
-		<h2><?= View::e($producto->nombre) ?></h2>
-		<span class="descripcion">
-			<?= $producto->descripcion ?>
-		</span>
-		<a href="/pedido?p[<?= (int)$producto->id ?>]=1" class="btn">Pedir ahora!</a>
-	</div>
-<?php endforeach ?>
-</div>
+        	<div class="columna">
+            <h1>Esta semana te ofrecemos:</h1>
+
+			<?php $ecobolsa = model_producto::getById(1);
+			echo $ecobolsa->descripcion; ?>
+			</div>
+            <div class="columna">
+			<div class="columnacentral"><div class="preciotapa">Por sólo<br><span style="color:#bacb45; font-size:72px;">$<?= $ecobolsa->precio ?></span></div></div>
+            <a href="<?= View::makeUri('/pedido?p[1]=1') ?>" class="pedido"/>Pedila ahora >>></a>
+			</div>
+			<div class="columna" style="margin:0;">
+            	<h1 style="height:40px; background:url('assets/img/camion.jpg') 0px -5px no-repeat; padding:0; margin:0;">Entrega a domicilio</h1>
+                <div class="ecobolsa">ECOBOLSA<br><br><br><span style="color:#e3ea90; font-size:20px; line-height:20px;">La comodidad de recibir<br>productos de calidad<br>en su casa</span></div>
+			</div>

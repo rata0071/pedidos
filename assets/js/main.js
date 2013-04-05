@@ -14,13 +14,12 @@ var semana = [0,0,0,0,0,0,0];
 var nombreDias = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
 var geocoder = new google.maps.Geocoder();
 var barrioField = $('#barrio_id');
+var horariosDisponiblesField = $('#horarios_disponibles');
+var tipoPedidoSeleccionado = $('#tipo-pedido :selected').val(); 
 
 // Devuelve true si hay que mostrar ese dia en el calendar
 var mostrarDia = function ( date ) {
-	barrioId = barrioField.val();
-	if ( barrioId == 0 ) {
-		return {0:false};
-	} else if ( semana[date.getDay()] > 0 ) {
+	if ( semana[date.getDay()] > 0 ) {
 		return {0:true}; 
 	} else {
 		return {0:false};
@@ -34,28 +33,12 @@ var seleccionarDia = function(dateText) {
 	cargarHorarios( $('#calendar').datepicker('getDate') );
 }
 
+
 // Vuelve a cargar el calendar
 var reloadCalendar = function () {
 	if ( $('#calendar').length != 0 ) {
-
-	semana = [0,0,0,0,0,0,0];
-	barrioId = barrioField.val();
-	r = recorridos[barrioId];
-	// sumamos los dias de recorridos de todos los horarios del barrio
-	for ( horario in r ) {
-	if (r.hasOwnProperty(horario)) {
-		semana[0] += r[horario]['domingo'];
-		semana[1] += r[horario]['lunes'];
-		semana[2] += r[horario]['martes'];
-		semana[3] += r[horario]['miercoles'];
-		semana[4] += r[horario]['jueves'];
-		semana[5] += r[horario]['viernes'];
-		semana[6] += r[horario]['sabado'];
-	}
-	}
-	$('#calendar').datepicker("refresh");
-	seleccionarDia( $('#calendar').datepicker().val() );
-
+		$('#calendar').datepicker("refresh");
+		seleccionarDia( $('#calendar').datepicker().val() );
 	}
 }
 
@@ -75,18 +58,22 @@ $("#calendar").datepicker( {
 
 // Carga los horarios disponibles para el dia seleccionado
 var cargarHorarios = function ( date ) {
-	horariosDisponiblesField = $('#horarios_disponibles');
 	barrioId = barrioField.val();
-	diaSeleccionado = date.getDay();
-	r = recorridos[barrioId];
+	diaSeleccionado = nombreDias[date.getDay()];
 	horariosDisponiblesField.html('');
 
-	// Para todos los recorridos de este barrio
+	if ( tipoPedidoSeleccionado == 'retiro' ) {
+		r = recorridos[0];
+	} else {
+		r = recorridos[barrioId];
+	}
+
+	// Para todos los recorridos
 	for ( horario in r ) {
 	if (r.hasOwnProperty(horario)) {
-		// Si hay recorrido el dia seleccionado lo agrego
-		if ( r[horario][nombreDias[diaSeleccionado]] > 0 ) {
-			horariosDisponiblesField.append( '<input type="radio" name="horario_id" value="'+horario+'" /> <span class="label"><i class="icon-time"/> '+ horarios[horario] +'</span><br />' );
+		if ( r[horario][diaSeleccionado] > 0 ) {
+			// Si hay recorrido el dia seleccionado lo agrego
+			horariosDisponiblesField.append( '<span class="span4"><input type="radio" name="horario_id" value="'+horario+'" /> <span class="label"><i class="icon-time"/> '+ horarios[horario] +'</span></span>' );
 		}
 	}
 	}
@@ -95,6 +82,23 @@ var cargarHorarios = function ( date ) {
 
 // BARRIOS
 
+var loadSemana = function() {
+	semana = [0,0,0,0,0,0,0];
+	barrioId = barrioField.val();
+	r = recorridos[barrioId];
+	// sumamos los dias de recorridos de todos los horarios del barrio
+	for ( horario in r ) {
+	if (r.hasOwnProperty(horario)) {
+		semana[0] += r[horario]['domingo'];
+		semana[1] += r[horario]['lunes'];
+		semana[2] += r[horario]['martes'];
+		semana[3] += r[horario]['miercoles'];
+		semana[4] += r[horario]['jueves'];
+		semana[5] += r[horario]['viernes'];
+		semana[6] += r[horario]['sabado'];
+	}
+	}
+}
 // Guarda el id del barrio en el campo
 var setBarrioId = function ( id ) {
 	if ( id ) {
@@ -104,8 +108,6 @@ var setBarrioId = function ( id ) {
 		$('#barrio_id').val(0);
 		showBarrios();
 	}
-
-	reloadCalendar();
 }
 
 // Nos devuelve el id interno del barrio devuelto por GMAPS
@@ -158,18 +160,33 @@ var cargarBarrio = function () {
 	});
 }
 
-// Revisamos los datos del pedido cuando carga la pagina
-if ( $('#direccion').val().length > 0 ) {
-	barrioId = barrioField.val();
-	if ( typeof(barrioId) != 'undefined' && barrioId != 0 ) {
-		reloadCalendar();
-	} else {
-		cargarBarrio();
+
+
+var reloadAll = function () {
+
+	if ( $('#direccion').val().length > 0 ) {
+		barrioId = barrioField.val();
+		if ( typeof(barrioId) == 'undefined' || barrioId == 0 ) {
+			cargarBarrio();
+		}
 	}
+
+	tipoPedidoSeleccionado = $('#tipo-pedido :selected').val();
+
+	if ( tipoPedidoSeleccionado == 'retiro' ) {
+		semana =[0,1,1,1,1,1,1];
+	} else {
+		loadSemana();
+	}
+
+	reloadCalendar();
 }
 
-// Cuando cambia la direccion volvemos a cargar el barrio
-$('#direccion').on('change',cargarBarrio);
+
+
+$('#direccion').on('change',reloadAll);
+
+$('#tipo-pedido').on('change',reloadAll);
 
 var ac = new usig.AutoCompleter('direccion', {
 	afterSelection: function(option) {
@@ -177,10 +194,10 @@ var ac = new usig.AutoCompleter('direccion', {
 			$('#calle').val(option.getCalle().nombre);
 			$('#numero').val(option.getAltura());
 		}
-		cargarBarrio();
 	}
 }); // autocompleter
 
+reloadAll();
 
 } // if #direccion
 

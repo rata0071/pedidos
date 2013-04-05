@@ -43,4 +43,11 @@ class controller_user {
 			Flight::redirect('/');
 		}
 	}
+
+	public function getData( $id ) {
+		if ( auth::isLoggedIn() && model_auth::getCurrent()->isAdmin() ) {
+			$user = model_user::getById($id);
+			echo json_encode($user->as_array());
+		}
+	}
 }

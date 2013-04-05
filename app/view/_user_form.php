@@ -1,13 +1,13 @@
 
 <div class="row-fluid">
-	<div class="span4 control-group">
+	<div class="span5 control-group">
 		<div class="input-prepend controls">
 			<span class="add-on control-label"><i class="icon-user"></i> Nombre </span>
 			<input type="text" name="nombre" required minlength="3" data-validation-minlength-message="El nombre es demasiado corto" data-validation-required-message="Por favor ingresa tu nombre."  value="<?= $datos ? View::e($datos['nombre']) : '' ?>" />
 		</div>
 		<p class="help-block"></p>
 	</div>
-	<div class="span4 control-group">
+	<div class="span5 control-group">
 		<div class="input-prepend controls">
 			<span class="add-on control-label"><i class="icon-user"></i> Apellido </span>
 			<input type="text" name="apellido" required minlength="3" data-validation-minlength-message="El apellido es demasiado corto" ddata-validation-required-message="Por favor ingresa tu apellido." value="<?= $datos ? View::e($datos['apellido']) : '' ?>" />
@@ -17,15 +17,15 @@
 </div>
 
 <div class="row-fluid">
-	<div class="control-group span4">
+	<div class="control-group span5">
 		<div class="input-prepend controls">
 			<span class="add-on control-label"><i class="icon-home"></i> Dirección </span> 
 			<input type="text" name="direccion" id="direccion" required data-validation-required-message="Por favor ingresa la dirección de entrega." value="<?= $datos ? View::e($datos['direccion']) : '' ?>" />
-		</div>
+		</div><br />
 		<small><i class="icon-exclamation-sign"></i> Ingresa calle y número</small>
 		<p class="help-block"></p>
 	</div>
-	<div class="control-group span2">
+	<div class="control-group span3">
 		<div class="input-prepend controls">
 			<span class="add-on control-label"><i class="icon-home"></i> Piso </span>
 			<input type="text" class="input-small" name="piso" value="<?= $datos ? View::e($datos['piso']) : '' ?>" />
@@ -49,7 +49,7 @@
 </div>
 
 <div class="row-fluid hide" id="barrios_select">
-	<div class="span4">
+	<div class="span5">
 		<select name="barrio">
 			<option>-- elige tu barrio --</option>
 			<option>Otro</option>
@@ -58,7 +58,7 @@
 		<?php endforeach ?>
 		</select>
 	</div>
-	<div class="span4">
+	<div class="span5">
 		<div class="alert alert-warning">
 			<i class="icon-exclamation-sign"></i> Asegurate que la dirección es correcta y elige tu barrio.
 		</div>
@@ -66,14 +66,14 @@
 </div>
 
 <div class="row-fluid">
-	<div class="control-group span4">
+	<div class="control-group span5">
 		<div class="input-prepend controls">
 			<span class="add-on control-label"><i class="icon-phone"></i> Telefono </span> 
 			<input type="text" name="telefono" minlength="8" data-validation-minlength-message="Por favor ingresa un telefono válido" required data-validation-required-message="Por favor ingresa un telefono." value="<?= $datos ? View::e($datos['telefono']) : '' ?>" />
 		</div>
 		<p class="help-block"></p>
 	</div>
-	<div class="control-group span4">
+	<div class="control-group span5">
 		<div class="input-prepend controls">
 			<span class="add-on control-label"><i class="icon-envelope"></i> Email </span> 
 			<input type="email" <?= $update ? 'disabled' : '' ?> data-validation-email-message="Por favor ingresa un email válido." data-validation-required-message="Por favor ingresa un email." required name="email" value="<?= $datos ? View::e($datos['email']) : '' ?>" />

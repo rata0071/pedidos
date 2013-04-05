@@ -48,6 +48,18 @@
 
 <form action="<?= View::makeUri('/pedido') ?>" method="post">
 
+<div class="row-fluid">
+<div class="span5">
+¿Te lo llevamos o lo pasas a buscar?
+<select name="tipo" id="tipo-pedido">
+	<option disabled="disabled" value="entrega" id="tipo-entrega">Entrega a domicilio (próximamente)</option>
+	<option value="retiro">Retirar por local</option>
+</select>
+</div>
+</div>
+
+<hr />
+
 <h2>Productos</h2>
 <?php foreach ( $productos as $producto ) : ?>
 <div class="row-fluid">
@@ -56,6 +68,8 @@
 </div>
 <?php endforeach ?>
 
+<hr />
+
 <h2>A donde enviarlo</h2>
 
 <?php if ( ! auth::isLoggedIn() ) : ?>
@@ -63,53 +77,48 @@
 <?php else : ?>
 	<?php $user = model_auth::getCurrent()->getUser() ?>
 <div class="row-fluid">
-	<div class="input-prepend span4"><span class="add-on"><i class="icon-user"></i> Nombre </span> <input type="text" name="nombre" value="<?= View::e($user->nombre) ?>" disabled="disabled" /></div>
-	<div class="input-prepend span4"><span class="add-on"><i class="icon-user"></i> Apellido </span> <input type="text" name="apellido" value="<?= View::e($user->apellido)  ?>" disabled="disabled" /></div>
+	<div class="input-prepend span5"><span class="add-on"><i class="icon-user"></i> Nombre </span> <input type="text" name="nombre" value="<?= View::e($user->nombre) ?>" disabled="disabled" /></div>
+	<div class="input-prepend span5"><span class="add-on"><i class="icon-user"></i> Apellido </span> <input type="text" name="apellido" value="<?= View::e($user->apellido)  ?>" disabled="disabled" /></div>
 </div>
 
 <div class="row-fluid">
-	<div class="input-prepend span4"><span class="add-on"><i class="icon-home"></i> Dirección </span> <input type="text" name="direccion" id="direccion" value="<?= View::e($user->direccion) ?>" disabled="disabled" /></div>
+	<div class="input-prepend span5"><span class="add-on"><i class="icon-home"></i> Dirección </span> <input type="text" name="direccion" id="direccion" value="<?= View::e($user->direccion) ?>" disabled="disabled" /></div>
 	<input type="hidden" name="barrio_id" id="barrio_id" value="<?= View::e($user->barrio_id) ?>" />
-	<div class="input-prepend span2"><span class="add-on"><i class="icon-home"></i> Piso </span> <input type="text" class="input-small" name="piso" value="<?= View::e($user->piso) ?>" disabled="disabled" /></div>
+	<div class="input-prepend span3"><span class="add-on"><i class="icon-home"></i> Piso </span> <input type="text" class="input-small" name="piso" value="<?= View::e($user->piso) ?>" disabled="disabled" /></div>
 	<div class="input-prepend span2"><span class="add-on"><i class="icon-home"></i> Depto</span> <input type="text" class="input-small" name="depto" value="<?= View::e($user->depto) ?>" disabled="disabled" /></div>
 </div>
 
 <div class="row-fluid">
-	<div class="input-prepend span4"><span class="add-on"><i class="icon-phone"></i> Telefono </span> <input type="text" name="telefono" value="<?= View::e($user->telefono) ?>" disabled="disabled" /></div>
-	<div class="input-prepend span4"><span class="add-on"><i class="icon-envelope"></i> Email </span> <input type="text" name="email" value="<?= View::e($user->email) ?>" disabled="disabled" /></div>
+	<div class="input-prepend span5"><span class="add-on"><i class="icon-phone"></i> Telefono </span> <input type="text" name="telefono" value="<?= View::e($user->telefono) ?>" disabled="disabled" /></div>
+	<div class="input-prepend span5"><span class="add-on"><i class="icon-envelope"></i> Email </span> <input type="text" name="email" value="<?= View::e($user->email) ?>" disabled="disabled" /></div>
 </div>
 <small class="row-fluid"><a href="<?= View::makeUri('/user/datos') ?>"><i class="icon-cog"></i> Cambiar datos personales</a></small>
 <?php endif ?>
-<div class="row-fluid">
-<div class="span4">
-¿Te lo llevamos o lo pasas a buscar?
-<select name="tipo" id="tipo-pedido">
-	<option value="entrega" id="tipo-entrega">Entrega a domicilio</option>
-	<option value="retiro">Retirar por local</option>
-</select>
-</div>
-</div>
-<br />
-<div class="row-fluid">
-	<div class="span8">
-		<p><i class="icon-pencil"></i> Observaciones, codigo de promoción, etc.</p>
-		<textarea rows="3" class="input-block-level" name="observaciones"><?= $datos ? View::e($datos['observaciones']) : '' ?></textarea>
-	</div>
-	<div class="clear"> </div>
-</div>
+
+<hr />
 
 <h2>Cuando entregarlo</h2>
 
 <div class="row-fluid">
-	<div class="span4" id="calendar"></div>
-	<div class="span4" id="horarios_disponibles"></div>
+	<div class="span5" id="calendar"></div>
+	<div class="span6"><div class="row-fluid" id="horarios_disponibles"></div></div>
 	<input type="hidden" name="fecha_entrega" id="fecha_entrega" value="<?= $datos ? View::e($datos['fecha_entrega']) : '' ?>" />
 	<input type="hidden" name="selected_horario_id" id="selected_horario_id" value="<?= $datos ? View::e($datos['horario_id']) : '' ?>" />
 	<div class="clear"> </div>
 </div>
 <input type="hidden" name="csrftoken" value="<?= $token ?>" />
 <br />
-<input type="submit" value="Hacer pedido" class="btn submit" />
+<button class="btn btn-large submit"><i class="icon-thumbs-up"></i> Hacer Pedido</i></button>
+
+<hr />
+<div class="row-fluid">
+	<div class="span12">
+		<p><i class="icon-pencil"></i> Observaciones, codigo de promoción, etc.</p>
+		<textarea rows="3" class="input-block-level" name="observaciones"><?= $datos ? View::e($datos['observaciones']) : '' ?></textarea>
+	</div>
+	<div class="clear"> </div>
+</div>
+
 </form>
 
 <script src="http://servicios.usig.buenosaires.gob.ar/usig-js/dev/usig.AutoCompleterFull.min.js"></script>
@@ -120,4 +129,14 @@
 var barrios = <?= model_barrio::getAllJson() ?>,
 	horarios = <?= model_horario::getAllJson() ?>,
 	recorridos = <?= model_recorrido::getAllJson() ?>;
+	recorridos[0] = {
+		"1": {"domingo":0,"lunes":1,"martes":1,"miercoles":1,"jueves":1,"viernes":1,"sabado":0}, 
+		"2": {"domingo":0,"lunes":1,"martes":1,"miercoles":1,"jueves":1,"viernes":1,"sabado":1}, 
+		"3": {"domingo":0,"lunes":1,"martes":1,"miercoles":1,"jueves":1,"viernes":1,"sabado":1}, 
+		"4": {"domingo":0,"lunes":1,"martes":1,"miercoles":1,"jueves":1,"viernes":1,"sabado":1}, 
+		"5": {"domingo":0,"lunes":1,"martes":1,"miercoles":1,"jueves":1,"viernes":1,"sabado":0}, 
+		"6": {"domingo":0,"lunes":1,"martes":1,"miercoles":1,"jueves":1,"viernes":1,"sabado":0},
+		"7": {"domingo":0,"lunes":1,"martes":1,"miercoles":1,"jueves":1,"viernes":1,"sabado":0}, 
+		"8": {"domingo":0,"lunes":1,"martes":1,"miercoles":1,"jueves":1,"viernes":1,"sabado":0}
+		};
 //--></script>

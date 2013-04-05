@@ -65,9 +65,9 @@ class pedido extends Model {
 		$_link = View::e( $link );
 
 		$mail->IsHTML(true);
-		$mail->Subject = "Confirma tu pedido - Vive Verde";
-		$mail->Body = 'Por favor confirma que los datos de este pedido son correctos haciendo <a href="'.$_link.'" target="_blank">click aqui</a> o ingresando a esta dirección: '.$_link;
-		$mail->AltBody = 'Por favor confirma que los datos de este *pedido son correctos* ingresando a esta direccion: '.$link;
+		$mail->Subject = "Confirma tu pedido - ".SITE;
+		$mail->Body = 'Por favor confirma que los datos de tu pedido son correctos haciendo <a href="'.$_link.'" target="_blank">click aqui</a> o ingresando a esta dirección: '.$_link;
+		$mail->AltBody = 'Por favor confirma que los datos de tu pedido son correctos ingresando a esta direccion: '.$link;
 
 		if(!$mail->Send()) {
 			error_log('Mailer error: '.$mail->ErrorInfo);
@@ -104,7 +104,7 @@ class pedido extends Model {
 			$errores[] = 'No seleccionaste ningún producto.';
 		}
 
-		if ( ! model_recorrido::getFechaDisponible($datos['fecha_entrega'], $datos['horario_id'], $datos['barrio_id']) ) {
+		if ( $datos['tipo'] == 'entrega' && ! model_recorrido::getFechaDisponible($datos['fecha_entrega'], $datos['horario_id'], $datos['barrio_id']) ) {
 			$ok = false;
 			$errores[] = 'El horario o fecha no esta disponible.';
 		}

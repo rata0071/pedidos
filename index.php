@@ -72,5 +72,7 @@ Flight::route('GET /auth/@id:[0-9]+/setpassword/@c:[a-f0-9]+/?$', array('control
 
 // Metodos de administracion
 Flight::route('GET /admin/pedidos', array('controller_admin','pedidos'));
+Flight::route('POST /admin/actualizar', array('controller_admin','actualizar'));
 
+Flight::route('GET /user/@id:[0-9]+/getdata', array('controller_user','getData'));
 Flight::start();

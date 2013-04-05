@@ -84,4 +84,28 @@ $('#accion-cancel').click(function(e){
 	$('#modal-confirmar').modal('hide');
 });
 
+$('.user-info').on('click',function(e){
+	console.log(e);
+	console.log(e.target);
+	if ( e.target.nodeName == 'A' ) {
+		t = $(e.target);
+	} else{
+		t = $(e.target).parent();
+	}
+	$.get('/user/' + t.data('userId') + '/getdata',[],function(data){
+		$('#modal-user #modal-user-nombre').text( data.nombre +' '+ data.apellido );
+		$('#modal-user .modal-body').html(
+			'<div class="row-fluid"><div class="span6">'+
+			'<i class="icon-phone"></i> '+ data.telefono + '<br />' +
+			'<i class="icon-home"></i> '+ data.direccion + ' piso: ' + data.piso + 'dpto:' + data.depto + '<br />' +
+			'<i class="icon-envelope"></i> '+ data.email +
+			'</div><div class="span6">'+
+			'<img src="http://maps.googleapis.com/maps/api/staticmap?center='+ encodeURIComponent(data.direccion) +',+Palermo,+Ciudad+Autónoma+de+Buenos+Aires,+Argentina&'+
+			'&markers=color:blue%7C'+ encodeURIComponent(data.direccion + ', Palermo, Ciudad Autónoma de Buenos Aires, Argentina' ) +'&zoom=13&size=240x200&maptype=roadmap&sensor=false" />'+
+			'</div></div>'
+			);
+	},'json')
+	$('#modal-user').modal('show');
+});
+
 });
