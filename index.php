@@ -37,6 +37,7 @@ ORM::configure('mysql:host=localhost;dbname=pedidos');
 ORM::configure('username', 'root');
 ORM::configure('password', '');
 
+ORM::configure('driver_options', array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 /****  AND DOWN THE RABBIT HOLE  ****/
 
