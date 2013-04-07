@@ -183,7 +183,7 @@ a.pedido {
 }
 
 
-a.pedido:hover {
+a.pedido:hover, a.blink {
 	background-position: 0 -93px;
 }
 

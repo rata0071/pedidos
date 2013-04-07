@@ -4,8 +4,18 @@ var d = new Date();
 
 // CALENDARIO
 
-//	traigo la fecha, la convierto a utc, la convierto a utc-3 le sumo 19 horas (hasta las 5 am devuelve mañana sino pasado)
-var mindate = new Date( d.getTime() + (d.getTimezoneOffset() * 60000) - (3600000 * 3) + (3600000 * 19) );
+//	traigo la fecha, la convierto a utc, la convierto a utc-3 le sumo 48horas
+var mindate = new Date( d.getTime() + (d.getTimezoneOffset() * 60000) - (3600000 * 3) + (3600000 * 48) );
+
+if ( $('.pedido').length > 0) {
+	setInterval(function(){
+	if ( $('.pedido').hasClass('blink') ) {
+		$('.pedido').removeClass('blink');
+	} else {
+		$('.pedido').addClass('blink');
+	}
+	},1000);
+}
 
 // Si tenemos un campo direccion
 if ( $('#direccion').length != 0 ) {
