@@ -89,11 +89,11 @@ class pedido extends Model {
 	}
 
 	public function expiro() {
-		return (strtotime($this->fecha_entrega) + (8*3600)) < time();
+		return (strtotime($this->fecha_entrega) + (36*3600)) < time();
 	}
 
 	public function puedeCancelar() {
-		return (strtotime($this->fecha_entrega) + (8*3600)) > time();
+		return (strtotime($this->fecha_entrega) + (24*3600)) > time();
 	}
 
 	public static function validar($datos) {

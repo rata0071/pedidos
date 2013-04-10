@@ -1,5 +1,3 @@
-<h1>Arma tu pedido</h1>
-
 <?php if ( auth::isLoggedIn() ) : ?>
 <h2>Tus últimos pedidos</h2>
 
@@ -42,9 +40,9 @@
 <?php endforeach ?>
 </tbody>
 </table>
-
-
 <?php endif ?>
+
+<h1>Arma tu pedido</h1>
 
 <form action="<?= View::makeUri('/pedido') ?>" method="post">
 
@@ -52,9 +50,18 @@
 <div class="span5">
 ¿Te lo llevamos o lo pasas a buscar?
 <select name="tipo" id="tipo-pedido">
-	<option disabled="disabled" value="entrega" id="tipo-entrega">Entrega a domicilio (próximamente)</option>
-	<option value="retiro">Retirar por local</option>
+	<option value="entrega" id="tipo-entrega">Entrega a domicilio</option>
+	<option value="retiro" id="tipo-retiro">Retirar por local</option>
 </select>
+</div>
+<div class="span3"></div>
+<div class="span4">
+<h1>Radio de entrega</h1>
+
+<p><img src="/assets/img/radio.png" alt="Radio de entrega ecobolsa Viveverde" /></p>
+
+<div class="alert alert-block alert-warning" id="fuera-del-radio" style="display:none">Lo sentimos, aún no estas dentro del radio de entrega. Revisa la dirección ingresada.</div>
+
 </div>
 </div>
 
@@ -127,8 +134,8 @@
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
 <script>//<!--
 var barrios = <?= model_barrio::getAllJson() ?>,
-	horarios = <?= model_horario::getAllJson() ?>,
-	recorridos = <?= model_recorrido::getAllJson() ?>;
+	horarios = <?= model_horario::getAllJson() ?>;
+	var recorridos = {};
 	recorridos[0] = {
 		"1": {"domingo":0,"lunes":1,"martes":1,"miercoles":1,"jueves":1,"viernes":1,"sabado":0}, 
 		"2": {"domingo":0,"lunes":1,"martes":1,"miercoles":1,"jueves":1,"viernes":1,"sabado":1}, 
@@ -139,4 +146,7 @@ var barrios = <?= model_barrio::getAllJson() ?>,
 		"7": {"domingo":0,"lunes":1,"martes":1,"miercoles":1,"jueves":1,"viernes":1,"sabado":0}, 
 		"8": {"domingo":0,"lunes":1,"martes":1,"miercoles":1,"jueves":1,"viernes":1,"sabado":0}
 		};
+	var myLat = <?= json_encode(LAT) ?>,
+	myLng = <?= json_encode(LNG) ?>, 
+	maxRadius = <?= json_encode(RADIUS) ?>;
 //--></script>

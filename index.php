@@ -39,6 +39,12 @@ ORM::configure('password', '');
 
 ORM::configure('driver_options', array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
 date_default_timezone_set('America/Argentina/Buenos_Aires');
+
+define ( 'LAT', '-34.591901' );
+define ( 'LNG', '-58.413731' );
+define ( 'RADIUS', '13' ); // Cuadras
+
+
 /****  AND DOWN THE RABBIT HOLE  ****/
 
 
