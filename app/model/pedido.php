@@ -104,10 +104,11 @@ class pedido extends Model {
 			$errores[] = 'No seleccionaste ningún producto.';
 		}
 
+		/* entrega por radio, validacion del lado delcliente por falta de tiempo
 		if ( $datos['tipo'] == 'entrega' && ! model_recorrido::getFechaDisponible($datos['fecha_entrega'], $datos['horario_id'], $datos['barrio_id']) ) {
 			$ok = false;
 			$errores[] = 'El horario o fecha no esta disponible.';
-		}
+		} */
 
 		return array( $ok, $errores);
 	}
