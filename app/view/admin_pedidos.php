@@ -95,7 +95,13 @@
 <tbody>
 <?php foreach ( $pedidos as $p ) : ?>
 	<tr>
-		<td><?= $p->fecha_entrega == date('Y-m-d') ? 'Hoy' : View::e($p->fecha_entrega) ?></td>
+		<td><?= $p->fecha_entrega == date('Y-m-d') ? 'Hoy' : View::e($p->fecha_entrega) ?>   
+			<?php if ( $p->tipo == 'entrega' ) : ?>
+				<i class="icon-truck" title="Entrega a domicilio"></i>
+			<?php else : ?>
+				<i class="icon-shopping-cart" title="Retira por local"></i>
+			<?php endif ?>
+		</td>
 		<td><?= View::e($p->getHorario()->descripcion) ?></td>
 		<td><?= View::e($p->getUser()->nombre.' '.$p->getUser()->apellido) ?> <a class="user-info btn btn-small" title="Datos del usuario" data-user-id="<?= (int)$p->getUser()->id ?>"><i class="icon-info-sign"></i></a></td>
 		<td><?= View::e($p->getUser()->direccion) ?></td>
@@ -159,7 +165,7 @@
 <script>//<!--
 var markers = [
 <?php foreach ( $pedidos as $p ) : ?>
-<?php if ( $p->getUser()->lat && $p->getUser()->lng ) : ?>
+<?php if ( $p->getUser()->lat && $p->getUser()->lng && $p->tipo == 'entrega' ) : ?>
 <?= '{id:'.$p->id.', lat: '.$p->getUser()->lat.', lng: '.$p->getUser()->lng.'},' ?>
 <?php endif ?>
 <?php endforeach ?>

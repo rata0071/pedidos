@@ -97,7 +97,7 @@ $('.user-info').on('click',function(e){
 		$('#modal-user .modal-body').html(
 			'<div class="row-fluid"><div class="span6">'+
 			'<i class="icon-phone"></i> '+ data.telefono + '<br />' +
-			'<i class="icon-home"></i> '+ data.direccion + ' piso: ' + data.piso + 'dpto:' + data.depto + '<br />' +
+			'<i class="icon-home"></i> '+ data.direccion + ' Piso: ' + data.piso + ' Dpto:' + data.depto + '<br />' +
 			'<i class="icon-envelope"></i> '+ data.email +
 			'</div><div class="span6">'+
 			'<img src="http://maps.googleapis.com/maps/api/staticmap?center='+ encodeURIComponent(data.direccion) +',+Palermo,+Ciudad+Autónoma+de+Buenos+Aires,+Argentina&'+
