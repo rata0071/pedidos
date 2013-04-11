@@ -75,7 +75,8 @@ var cargarHorarios = function ( date ) {
 	if ( tipoPedidoSeleccionado == 'retiro' ) {
 		r = recorridos[0];
 	} else {
-		r = recorridos[barrioId];
+		r = recorridos[0]; // <-
+		//r = recorridos[barrioId];
 	}
 
 	// Para todos los recorridos
@@ -83,7 +84,7 @@ var cargarHorarios = function ( date ) {
 	if (r.hasOwnProperty(horario)) {
 		if ( r[horario][diaSeleccionado] > 0 ) {
 			// Si hay recorrido el dia seleccionado lo agrego
-			horariosDisponiblesField.append( '<span class="span4"><input type="radio" name="horario_id" value="'+horario+'" /> <span class="label"><i class="icon-time"/> '+ horarios[horario] +'</span></span>' );
+			horariosDisponiblesField.append( '<span class="span6"><input type="radio" name="horario_id" value="'+horario+'" /> <span class="label"><i class="icon-time"/> '+ horarios[horario] +'</span></span>' );
 		}
 	}
 	}
@@ -213,6 +214,7 @@ var reloadAll = function () {
 			$('#tipo-entrega').removeAttr('disabled');
 			$('#tipo-pedido').val( $('#tipo-entrega').val() );
 		}
+		reloadCalendar();
 	} else if ( $('#direccion').val().length > 0 ) {
 
 	setTimeout(function() {
@@ -224,7 +226,8 @@ var reloadAll = function () {
 			$('#tipo-entrega').removeAttr('disabled');
 			$('#tipo-pedido').val( $('#tipo-entrega').val() );
 		} else {
-			semana = [0,0,0,0,0,0,0];
+			// pongo horarios de retiro
+			semana =[0,1,1,1,1,1,1];
 			$('#fuera-del-radio').show();
 			$('#tipo-entrega').attr('disabled','disabled');
 			$('#tipo-pedido').val( $('#tipo-retiro').val() );

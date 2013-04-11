@@ -47,25 +47,8 @@
 <form action="<?= View::makeUri('/pedido') ?>" method="post">
 
 <div class="row-fluid">
-<div class="span5">
-¿Te lo llevamos o lo pasas a buscar?
-<select name="tipo" id="tipo-pedido">
-	<option value="entrega" id="tipo-entrega">Entrega a domicilio</option>
-	<option value="retiro" id="tipo-retiro">Retirar por local</option>
-</select>
-</div>
-<div class="span3"></div>
-<div class="span4">
-<h1>Radio de entrega</h1>
+<div class="span8">
 
-<p><img src="/assets/img/radio.png" alt="Radio de entrega ecobolsa Viveverde" /></p>
-
-<div class="alert alert-block alert-warning" id="fuera-del-radio" style="display:none">Lo sentimos, aún no estas dentro del radio de entrega. Revisa la dirección ingresada.</div>
-
-</div>
-</div>
-
-<hr />
 
 <h2>Productos</h2>
 <?php foreach ( $productos as $producto ) : ?>
@@ -74,6 +57,10 @@
 	<div class="span4"><input class="input-smallest" type="number" value="<?= $datos ? (int)$datos['p'][$producto->id] : (int)$cantidades[$producto->id] ?>" name="p[<?= $producto->id ?>]"/></div>
 </div>
 <?php endforeach ?>
+
+</div>
+</div>
+
 
 <hr />
 
@@ -104,11 +91,28 @@
 
 <hr />
 
-<h2>Cuando entregarlo</h2>
-
 <div class="row-fluid">
-	<div class="span5" id="calendar"></div>
-	<div class="span6"><div class="row-fluid" id="horarios_disponibles"></div></div>
+<div class="span12">
+<h2>Cuando entregarlo/retirarlo</h2>
+
+	¿Te lo llevamos o lo pasas a buscar? <br />
+	<select name="tipo" id="tipo-pedido">
+		<option value="entrega" id="tipo-entrega">Entrega a domicilio</option>
+		<option value="retiro" id="tipo-retiro">Retirar por local</option>
+	</select>
+	<div class="alert alert-block alert-warning" id="fuera-del-radio" style="display:none">Lo sentimos, aún no estas dentro del radio de entrega. Revisa la dirección ingresada.</div>
+
+</div>
+</div>
+<div class="row-fluid">
+	<div class="span4" id="calendar"></div>
+	<div class="span4"><div class="row-fluid" id="horarios_disponibles"></div></div>
+	<div class="span4">
+	<h1>Radio de entrega</h1>
+	<p><img src="/assets/img/radio.png" alt="Radio de entrega ecobolsa Viveverde" /></p>
+	</div>
+
+<hr />
 	<input type="hidden" name="fecha_entrega" id="fecha_entrega" value="<?= $datos ? View::e($datos['fecha_entrega']) : '' ?>" />
 	<input type="hidden" name="selected_horario_id" id="selected_horario_id" value="<?= $datos ? View::e($datos['horario_id']) : '' ?>" />
 	<div class="clear"> </div>
