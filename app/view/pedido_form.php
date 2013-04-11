@@ -92,23 +92,25 @@
 <hr />
 
 <div class="row-fluid">
-<div class="span12">
+<div class="span8">
 <h2>Cuando entregarlo/retirarlo</h2>
-
+</div>
+<div class="span4">
+	<h1>Radio de entrega</h1>
+</div>
+</div>
+<div class="row-fluid">
+	<div class="span4">
 	¿Te lo llevamos o lo pasas a buscar? <br />
 	<select name="tipo" id="tipo-pedido">
 		<option value="entrega" id="tipo-entrega">Entrega a domicilio</option>
 		<option value="retiro" id="tipo-retiro">Retirar por local</option>
 	</select>
 	<div class="alert alert-block alert-warning" id="fuera-del-radio" style="display:none">Lo sentimos, aún no estas dentro del radio de entrega. Revisa la dirección ingresada.</div>
-
-</div>
-</div>
-<div class="row-fluid">
-	<div class="span4" id="calendar"></div>
+	<div id="calendar"></div>
+	</div>
 	<div class="span4"><div class="row-fluid" id="horarios_disponibles"></div></div>
 	<div class="span4">
-	<h1>Radio de entrega</h1>
 	<p><img src="/assets/img/radio.png" alt="Radio de entrega ecobolsa Viveverde" /></p>
 	</div>
 
