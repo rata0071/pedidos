@@ -80,6 +80,13 @@
 	<input type="hidden" name="barrio_id" id="barrio_id" value="<?= View::e($user->barrio_id) ?>" />
 	<div class="input-prepend span3"><span class="add-on"><i class="icon-home"></i> Piso </span> <input type="text" class="input-small" name="piso" value="<?= View::e($user->piso) ?>" disabled="disabled" /></div>
 	<div class="input-prepend span2"><span class="add-on"><i class="icon-home"></i> Depto</span> <input type="text" class="input-small" name="depto" value="<?= View::e($user->depto) ?>" disabled="disabled" /></div>
+
+	<input type="hidden" name="calle" id="calle" value="<?= View::e($user->calle) ?>" />
+	<input type="hidden" name="numero" id="numero" value="<?= View::e($user->numero) ?>" />
+	<input type="hidden" name="barrio_id" id="barrio_id" value="<?= View::e($user->barrio_id) ?>" />
+	<input type="hidden" name="lat" id="lat" value="<?= View::e($user->lat) ?>" />
+	<input type="hidden" name="lng" id="lng" value="<?= View::e($user->lng) ?>" />
+
 </div>
 
 <div class="row-fluid">
