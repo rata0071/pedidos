@@ -44,14 +44,6 @@ var seleccionarDia = function(dateText) {
 }
 
 
-// Vuelve a cargar el calendar
-var reloadCalendar = function () {
-	if ( $('#calendar').length != 0 ) {
-		$('#calendar').datepicker("refresh");
-		seleccionarDia( $('#calendar').datepicker().val() );
-	}
-}
-
 // Configura y carga el calendar
 $("#calendar").datepicker( { 
 	monthNames:["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"], 
@@ -64,6 +56,14 @@ $("#calendar").datepicker( {
 });
 
 
+// Vuelve a cargar el calendar
+var reloadCalendar = function () {
+	if ( $('#calendar').length != 0 ) {
+		$('#calendar').datepicker("refresh");
+		seleccionarDia( $('#calendar').datepicker().val() );
+	}
+}
+
 // HORARIOS
 
 // Carga los horarios disponibles para el dia seleccionado
@@ -71,13 +71,7 @@ var cargarHorarios = function ( date ) {
 	barrioId = barrioField.val();
 	diaSeleccionado = nombreDias[date.getDay()];
 	horariosDisponiblesField.html('');
-
-	if ( tipoPedidoSeleccionado == 'retiro' ) {
-		r = recorridos[0];
-	} else {
-		r = recorridos[0]; // <-
-		//r = recorridos[barrioId];
-	}
+	r = recorridos[0];
 
 	// Para todos los recorridos
 	for ( horario in r ) {
@@ -90,34 +84,12 @@ var cargarHorarios = function ( date ) {
 	}
 }
 
-
-// BARRIOS
-
-var loadSemana = function() {
-	semana = [0,0,0,0,0,0,0];
-	barrioId = barrioField.val();
-	r = recorridos[barrioId];
-	// sumamos los dias de recorridos de todos los horarios del barrio
-	for ( horario in r ) {
-	if (r.hasOwnProperty(horario)) {
-		semana[0] += r[horario]['domingo'];
-		semana[1] += r[horario]['lunes'];
-		semana[2] += r[horario]['martes'];
-		semana[3] += r[horario]['miercoles'];
-		semana[4] += r[horario]['jueves'];
-		semana[5] += r[horario]['viernes'];
-		semana[6] += r[horario]['sabado'];
-	}
-	}
-}
 // Guarda el id del barrio en el campo
 var setBarrioId = function ( id ) {
 	if ( id ) {
 		$('#barrio_id').val( id );
-		hideBarrios();
 	} else {
 		$('#barrio_id').val(0);
-//		showBarrios(); // <-
 	}
 }
 
@@ -130,16 +102,9 @@ var getBarrioId = function ( barrio ) {
 	}
 }
 
-// Mostrar el select de barrios
-var showBarrios = function () {
-	$('#barrios_select').show();
-}
-var hideBarrios = function () {
-	$('#barrios_select').hide();
-}
 
 // Trae el barrio segun la direccion
-var cargarBarrio = function () {
+var cargarBarrio = function ( cb ) {
 	direccion = $('#direccion').val() + ', Ciudad Autónoma de Buenos Aires, Argentina';
 	geocoder.geocode( { 'address': direccion }, function(results, status) {
 		var barrio_id = 0;
@@ -158,6 +123,7 @@ var cargarBarrio = function () {
 			var total = $(results[0].address_components).length;
 			$(results[0].address_components).each(function(index,element){
 
+				// Si es un barrio guardo el elemento
 				if ( element.types.indexOf('neighborhood') != -1 ) {
 					barrio_id = getBarrioId(element.long_name);
 				}
@@ -165,6 +131,7 @@ var cargarBarrio = function () {
 				// ultimo elemento
 				if ( index === total - 1 ) {
 					setBarrioId( barrio_id );
+					cb();
 				}
 			});
 		}
@@ -190,8 +157,6 @@ function deg2rad(deg) {
 }
 
 var estaEnElRadioEntrega = function( lat, lng ) { 
-	console.log(getDistanceFromLatLng(myLat,myLng,lat,lng));
-	console.log(myLat,myLng,lat,lng);
 	if ( getDistanceFromLatLng(myLat,myLng,lat,lng) < maxRadius * 100 ) {
 		return true;
 	} else {
@@ -201,45 +166,34 @@ var estaEnElRadioEntrega = function( lat, lng ) {
 
 var reloadAll = function () {
 
-	if ( $('#direccion').val().length > 0 ) {
-		cargarBarrio();
-	}
-
 	tipoPedidoSeleccionado = $('#tipo-pedido :selected').val();
 
-	if ( tipoPedidoSeleccionado == 'retiro' ) {
-		semana =[0,1,1,1,1,1,1];
-		if ( estaEnElRadioEntrega( $('#lat').val(), $('#lng').val() ) ) {	// <-
-			$('#fuera-del-radio').hide();
-			$('#tipo-entrega').removeAttr('disabled');
-			$('#tipo-pedido').val( $('#tipo-entrega').val() );
-		}
-		reloadCalendar();
-	} else if ( $('#direccion').val().length > 0 ) {
+	if ( $('#direccion').val().length > 0 ) {
+		cargarBarrio(function(){
 
-	setTimeout(function() {
-
-		// chequear que esta en el radio de entrega
-		if ( estaEnElRadioEntrega( $('#lat').val(), $('#lng').val() ) ) {	// <-
-			semana = [0,1,1,1,1,1,1]; 
-			$('#fuera-del-radio').hide();
-			$('#tipo-entrega').removeAttr('disabled');
-			$('#tipo-pedido').val( $('#tipo-entrega').val() );
-		} else {
-			// pongo horarios de retiro
 			semana =[0,1,1,1,1,1,1];
-			$('#fuera-del-radio').show();
-			$('#tipo-entrega').attr('disabled','disabled');
-			$('#tipo-pedido').val( $('#tipo-retiro').val() );
-		}
-		
-		/** comment out aplico radio de entrega // <- 
-		loadSemana();
-		*/
 
-		reloadCalendar();
-	},1500);
+			if ( tipoPedidoSeleccionado == 'retiro' ) {
+				if ( estaEnElRadioEntrega( $('#lat').val(), $('#lng').val() ) ) {
+					$('#fuera-del-radio').hide();
+					$('#tipo-entrega').removeAttr('disabled');
+				}
+			} else {
+				// chequear que esta en el radio de entrega
+				if ( estaEnElRadioEntrega( $('#lat').val(), $('#lng').val() ) ) {
+					$('#fuera-del-radio').hide();
+					$('#tipo-entrega').removeAttr('disabled');
+				} else {
+					// pongo horarios de retiro
+					$('#fuera-del-radio').show();
+					$('#tipo-entrega').attr('disabled','disabled');
+					$('#tipo-pedido').val( $('#tipo-retiro').val() );
+				}
+			}
 
+			reloadCalendar();
+
+		});
 	}
 }
 
