@@ -72,7 +72,7 @@
 		</div>
 </div>
             	<ul class="menuprincipal">
-            	<li><a href="<?= View::makeUri('/ecobolsa') ?>">ECOBOLSA DE LA SEMANA</a></li>
+            	<li><a href="<?= View::makeUri('/ecobolsa') ?>">ECOBOLSAS DE LA SEMANA</a></li>
                 <li><a href="<?= View::makeUri('/como-comprar') ?>">¿CÓMO COMPRAR?</a></li>
                 <li><a href="<?= View::makeUri('/quienes-somos') ?>">QUIENES SOMOS</a></li>
                 <li style="margin:0;" ><a href="<?= View::makeUri('/contacto') ?>">CONTACTO</a></li>
