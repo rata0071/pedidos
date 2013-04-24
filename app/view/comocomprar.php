@@ -11,7 +11,7 @@
 <?php $ecobolsa = model_producto::getById(2) ?>
 	<div class="span4">
 		<div class="columnacentral"><div class="preciotapa">Por sólo<br><span style="color:#bacb45; font-size:72px;">$<?= $ecobolsa->precio ?></span></div></div>
-		<a href="<?= View::makeUri('/pedido?p['$ecobolsa->id']=1') ?>" class="pedido"/>Pedila ahora >>></a>
+		<a href="<?= View::makeUri('/pedido?p['.$ecobolsa->id.']=1') ?>" class="pedido"/>Pedila ahora >>></a>
 	</div>
 
 </div>
